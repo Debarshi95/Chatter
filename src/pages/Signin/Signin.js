@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Form, Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

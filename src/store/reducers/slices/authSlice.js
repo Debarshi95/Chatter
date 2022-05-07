@@ -1,6 +1,5 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { signup, checkUserNameTaken, createUser, signin, signout } from 'services/firebaseApi';
-
-const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 
 export const requestSignIn = createAsyncThunk(
   'auth/requestSignin',
