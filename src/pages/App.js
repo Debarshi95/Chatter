@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Navbar } from 'components';
+import { Loader, Navbar } from 'components';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { auth, onAuthStateChanged } from 'Firebase';
 import { useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ const App = () => {
           <Route
             path="/"
             element={
-              <Suspense fallback={<h2>Loading..</h2>}>
+              <Suspense fallback={<Loader />}>
                 <HomePage />
               </Suspense>
             }
@@ -38,7 +38,7 @@ const App = () => {
           <Route
             path="/signup"
             element={
-              <Suspense fallback={<h2>Loading..</h2>}>
+              <Suspense fallback={<Loader />}>
                 <SignupPage />
               </Suspense>
             }
@@ -46,7 +46,7 @@ const App = () => {
           <Route
             path="/signin"
             element={
-              <Suspense fallback={<h2>Loading..</h2>}>
+              <Suspense fallback={<Loader />}>
                 <SigninPage />
               </Suspense>
             }
