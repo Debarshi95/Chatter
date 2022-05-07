@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Form, Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -5,65 +6,60 @@ import { AuthErrorCodes } from 'Firebase';
 import withAuthRoute from 'hoc/withAuthRoute';
 
 import { Button, Text, Input } from 'components';
-import { validateRegister } from 'utils/formValidations';
+import { validateLogin } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
-import { requestSignUp } from 'store/reducers/slices';
+import { requestSignIn } from 'store/reducers/slices';
 
-const Signup = () => {
+const Signin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = async (values, { resetForm, setFieldError }) => {
-    const { password, confirmPassword } = values;
+  const handleSubmit = async (values, { resetForm }) => {
     let message;
 
-    if (password !== confirmPassword) {
-      return setFieldError('confirmPassword', 'Passwords donot match');
-    }
-
     try {
-      const res = await dispatch(requestSignUp(values)).unwrap();
+      const res = await dispatch(requestSignIn(values)).unwrap();
+
       if (res?.id) {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      if (err?.code === AuthErrorCodes.EMAIL_EXISTS) {
-        message = authErrorMessage.EMAIL_IN_USE;
+      if (err?.code === AuthErrorCodes.INVALID_PASSWORD) {
+        message = authErrorMessage.WRONG_PASSWORD;
+      } else if (err?.code === AuthErrorCodes.USER_DELETED) {
+        message = authErrorMessage.USER_NOT_FOUND;
       } else {
         message = err?.message;
       }
     }
 
     resetForm({
-      values: { ...values, password: '', confirmPassword: '' },
+      values: { ...values, password: '' },
       errors: { message },
       touched: {
         password: true,
-        confirmPassword: true,
       },
     });
     return null;
   };
 
   return (
-    <div className="w-full p-4 max-w-md mx-auto my-8">
+    <div className="w-full p-4 max-w-md mx-auto my-20">
       <Text
         variant="h5"
         className="text-3xl md:text-4xl mt-1 text-center text-white font-medium mb-6"
       >
-        Signup to get started
+        Sign in to continue
       </Text>
       <Formik
         initialValues={{
-          username: '',
           email: '',
           password: '',
-          confirmPassword: '',
         }}
-        validationSchema={validateRegister()}
+        validationSchema={validateLogin()}
         onSubmit={handleSubmit}
       >
-        {({ handleSubmit: handleFormikSubmit, isSubmitting, values, errors, isValid }) => {
+        {({ handleSubmit: handleFormikSubmit, isSubmitting, values, errors, touched }) => {
           return (
             <>
               {errors?.message && (
@@ -75,13 +71,6 @@ const Signup = () => {
                 </Text>
               )}
               <Form autoComplete="off" onSubmit={handleFormikSubmit}>
-                <Input
-                  name="username"
-                  type="text"
-                  className=""
-                  placeholder="Username"
-                  value={values.username}
-                />
                 <Input name="email" type="email" placeholder="Email" value={values.email} />
                 <Input
                   name="password"
@@ -89,28 +78,15 @@ const Signup = () => {
                   placeholder="Password"
                   value={values.password}
                 />
-                <Input
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={values.confirmPassword}
-                />
                 <Button
                   component="button"
                   type="submit"
                   className="mt-4 rounded-md text-slate-800"
-                  disabled={
-                    isSubmitting ||
-                    !isValid ||
-                    Boolean(
-                      values.username === '' ||
-                        values.email === '' ||
-                        values.password === '' ||
-                        values.confirmPassword === ''
-                    )
-                  }
+                  disabled={Boolean(
+                    isSubmitting || !touched || values.email === '' || values.password === ''
+                  )}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Sign Up'}
+                  {isSubmitting ? 'Submitting...' : 'Sign In'}
                 </Button>
               </Form>
             </>
@@ -121,4 +97,4 @@ const Signup = () => {
   );
 };
 
-export default withAuthRoute(Signup);
+export default withAuthRoute(Signin);

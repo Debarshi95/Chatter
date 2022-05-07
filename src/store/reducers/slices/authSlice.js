@@ -6,11 +6,10 @@ export const requestSignIn = createAsyncThunk(
   'auth/requestSignin',
   async (inputData, { rejectWithValue }) => {
     try {
-      const { email, password } = inputData;
-      const res = await signin(email, password);
+      const res = await signin(inputData);
       return res;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue({ message: error?.message, code: error?.code });
     }
   }
 );

@@ -7,6 +7,7 @@ import { setUser } from 'store/reducers/slices';
 
 const HomePage = lazy(() => import('./Home/Home'));
 const SignupPage = lazy(() => import('./Signup/Signup'));
+const SigninPage = lazy(() => import('./Signin/Signin'));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,14 @@ const App = () => {
             element={
               <Suspense fallback={<h2>Loading..</h2>}>
                 <SignupPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              <Suspense fallback={<h2>Loading..</h2>}>
+                <SigninPage />
               </Suspense>
             }
           />

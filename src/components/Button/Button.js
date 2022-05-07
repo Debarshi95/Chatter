@@ -11,11 +11,10 @@ const Button = ({ component, text, className, children, ...props }) => {
 
   return (
     <Component
-      className={cn(
-        'p-3 text-lg md:text-xl w-full font-medium text-center bg-white hover:bg-gray-200 cursor-pointer',
-        className,
-        { 'bg-gray-500': props.disabled }
-      )}
+      className={cn('p-3 text-lg md:text-xl w-full font-medium text-center bg-white', className, {
+        'bg-gray-500': props.disabled,
+        'hover:bg-gray-200 cursor-pointer': !props.disabled,
+      })}
       {...props}
     >
       {children}
