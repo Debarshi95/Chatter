@@ -3,29 +3,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Button, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
-import { requestGetUserPosts, requestUpdateUserProfileData } from 'store/reducers/slices';
+import { requestGetUserProfilePosts, requestUpdateUserProfileData } from 'store/reducers/slices';
 import { selectAuthUser, selectUserPosts } from 'store/selectors';
 import { selectUserById } from 'store/selectors/searchSelector';
 import { getFirstChar, isFollowing } from 'utils/helperFuncs';
 
 const Profile = () => {
   const {
-    state: { uid },
+    state: { id },
   } = useLocation();
 
   const dispatch = useDispatch();
-  const user = useSelector(selectUserById(uid));
+  const user = useSelector(selectUserById(id));
 
   const authUser = useSelector(selectAuthUser);
   const posts = useSelector(selectUserPosts);
 
-  const isFollowingUser = isFollowing(user, authUser.id);
+  const isFollowingUser = isFollowing(user, authUser.uid);
 
   useEffect(() => {
-    if (authUser?.uid && authUser.uid !== uid) {
-      dispatch(requestGetUserPosts(uid));
+    if (authUser?.uid && authUser.uid !== id) {
+      dispatch(requestGetUserProfilePosts(id));
     }
-  }, [authUser.uid, dispatch, uid]);
+  }, [authUser.uid, dispatch, id]);
 
   const handleButtonClick = () => {
     const userId = user.id;

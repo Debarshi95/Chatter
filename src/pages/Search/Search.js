@@ -3,11 +3,13 @@ import { withProtectedRoute } from 'hoc';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestGetAllUsers } from 'store/reducers/slices';
-import { selectUsers } from 'store/selectors';
+import { selectAuthUser, selectUsers } from 'store/selectors';
+import { isFollowing } from 'utils/helperFuncs';
 
 const Search = () => {
   const dispatch = useDispatch();
-  const users = useSelector(selectUsers);
+  const authUser = useSelector(selectAuthUser);
+  const users = useSelector(selectUsers(authUser.uid));
 
   useEffect(() => {
     dispatch(requestGetAllUsers());
@@ -15,11 +17,21 @@ const Search = () => {
 
   return (
     <div className="bg-green w-full p-4">
-      {users?.map((user) => (
-        <div className="border-2 border-slate-700 rounded-lg p-4 my-2" key={user.id}>
-          <CardHeader key={user.id} user={user} showFollowButton />
-        </div>
-      ))}
+      {users?.map((user) => {
+        const isFollowingUser = isFollowing(user, authUser.uid);
+        return (
+          <div className="border-2 border-slate-700 rounded-lg p-4 my-2" key={user.id}>
+            <CardHeader
+              key={user.id}
+              authUserId={authUser.id}
+              username={user.username}
+              userId={user.id}
+              isFollowing={isFollowingUser}
+              showFollowButton
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

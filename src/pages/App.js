@@ -1,10 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Loader, Navbar, NotFound } from 'components';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { auth, onAuthStateChanged } from 'Firebase';
 import { useDispatch } from 'react-redux';
-import { setUser } from 'store/reducers/slices';
-import { requestGetUserData } from 'store/reducers/slices/authSlice';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Loader, Navbar, NotFound } from 'components';
+import { auth, onAuthStateChanged } from 'Firebase';
+import { setUser, requestGetUserData } from 'store/reducers/slices';
 
 const HomePage = lazy(() => import('./Home/Home'));
 const SignupPage = lazy(() => import('./Signup/Signup'));

@@ -8,20 +8,20 @@ import { requestGetAllPosts } from 'store/reducers/slices/postSlice';
 const Home = () => {
   const dispatch = useDispatch();
   const posts = useSelector(selectPosts);
-  const user = useSelector(selectAuthUser);
+  const authUser = useSelector(selectAuthUser);
 
   useEffect(() => {
-    if (user?.uid) {
-      dispatch(requestGetAllPosts(user.uid));
+    if (authUser?.uid) {
+      dispatch(requestGetAllPosts({ userId: authUser.uid, following: authUser.following }));
     }
-  }, [user?.uid, dispatch]);
+  }, [authUser.uid, dispatch, authUser.following]);
 
   return (
     <div className="p-4">
-      <PostBox contentEditable user={user} />
+      <PostBox contentEditable user={authUser} />
       <section>
         {posts.map((post) => (
-          <PostBox key={post.id} post={post} user={user} />
+          <PostBox key={post.id} post={post} user={authUser} />
         ))}
       </section>
     </div>
