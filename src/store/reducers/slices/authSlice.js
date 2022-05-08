@@ -20,8 +20,8 @@ export const requestSignIn = createAsyncThunk(
   }
 );
 
-export const requestGetUserData = createAsyncThunk(
-  'auth/getUserData',
+export const requestGetAuthUserData = createAsyncThunk(
+  'auth/getAuthUserData',
   async (uid, { rejectWithValue }) => {
     try {
       const res = await getDocById(uid, 'users');
@@ -101,12 +101,12 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    [requestGetUserData.fulfilled]: (state, action) => {
+    [requestGetAuthUserData.fulfilled]: (state, action) => {
       state.user = { ...state.user, ...action.payload };
       state.loading = false;
       state.error = '';
     },
-    [requestGetUserData.rejected]: (state, action) => {
+    [requestGetAuthUserData.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;

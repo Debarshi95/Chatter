@@ -4,10 +4,15 @@ export {
   requestSignUp,
   setUser,
   requestSignOut,
-  requestGetUserData,
+  requestGetAuthUserData,
 } from './authSlice';
 
-export { default as postReducer, requestCreatePost, requestGetAllPosts } from './postSlice';
+export {
+  default as postReducer,
+  requestCreatePost,
+  requestGetAllPosts,
+  requestUpdatePost,
+} from './postSlice';
 
 export { default as searchReducer, requestGetAllUsers } from './searchSlice';
 export {

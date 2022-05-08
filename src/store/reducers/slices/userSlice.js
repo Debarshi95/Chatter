@@ -1,21 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getPosts, updateUserStats } from 'services/firebaseApi';
-import { requestGetUserData } from './authSlice';
+import { requestGetAuthUserData } from './authSlice';
 import { requestGetAllUsers } from './searchSlice';
 
 export const requestUpdateUserProfileData = createAsyncThunk(
   'users/updateUserProfileData',
   async (userData, { rejectWithValue, dispatch }) => {
     const { type, authUserId, userId } = userData;
-
     try {
       await Promise.all([
-        updateUserStats({ docId: userId, type, userId: authUserId, path: 'followers' }),
-        updateUserStats({ docId: authUserId, type, userId, path: 'following' }),
+        updateUserStats({ docId: userId, type, data: authUserId, path: 'followers' }),
+        updateUserStats({ docId: authUserId, type, data: userId, path: 'following' }),
       ]);
 
       dispatch(requestGetAllUsers());
-      dispatch(requestGetUserData(authUserId));
+      dispatch(requestGetAuthUserData(authUserId));
     } catch (error) {
       rejectWithValue(error);
     }
@@ -45,6 +44,8 @@ const initialState = {
   followers: [],
   following: [],
   posts: [],
+  retweets: [],
+  likes: [],
   loading: false,
   error: '',
 };
