@@ -10,6 +10,7 @@ const SignupPage = lazy(() => import('./Signup/Signup'));
 const SigninPage = lazy(() => import('./Signin/Signin'));
 const SearchPage = lazy(() => import('./Search/Search'));
 const ProfilePage = lazy(() => import('./Profile/Profile'));
+const IndexPage = lazy(() => import('components/Wrapper/Wrapper'));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -34,12 +35,41 @@ const App = () => {
             path="/"
             element={
               <Suspense fallback={<Loader />}>
-                <HomePage />
+                <IndexPage />
               </Suspense>
             }
-          />
+          >
+            <Route
+              path="/"
+              index
+              element={
+                <Suspense fallback={<Loader />}>
+                  <HomePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="profile/:username"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <ProfilePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="search"
+              index
+              element={
+                <Suspense fallback={<Loader />}>
+                  <SearchPage />
+                </Suspense>
+              }
+            />
+          </Route>
+
           <Route
             path="/signup"
+            index
             element={
               <Suspense fallback={<Loader />}>
                 <SignupPage />
@@ -48,28 +78,14 @@ const App = () => {
           />
           <Route
             path="/signin"
+            index
             element={
               <Suspense fallback={<Loader />}>
                 <SigninPage />
               </Suspense>
             }
           />
-          <Route
-            path="/search"
-            element={
-              <Suspense fallback={<Loader />}>
-                <SearchPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/profile/:username"
-            element={
-              <Suspense fallback={<Loader />}>
-                <ProfilePage />
-              </Suspense>
-            }
-          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

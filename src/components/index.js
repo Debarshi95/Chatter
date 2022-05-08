@@ -7,3 +7,4 @@ export { default as NotFound } from './NotFound/NotFound';
 export { default as Loader } from './Loader/Loader';
 export { default as PostBox } from './PostBox/PostBox';
 export { default as CardHeader } from './CardHeader/CardHeader';
+export { default as Sidebar } from './Sidebar/Sidebar';

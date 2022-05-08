@@ -14,3 +14,9 @@ body {
 .h-80 {
   height: 80vh;
 }
+.h-90 {
+  height: 90vh;
+}
+.max-w-75 {
+  max-width: 75%;
+}
