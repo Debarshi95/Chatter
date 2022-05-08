@@ -9,14 +9,25 @@ const PostBox = ({ contentEditable, post, user }) => {
   const dispatch = useDispatch();
 
   const handleCreatePost = () => {
+    if (contentRef.current.textContent === '') return;
     dispatch(
-      requestCreatePost({ content: contentRef.current.textContent, userId: user.uid, id: user.id })
+      requestCreatePost({
+        content: contentRef.current.textContent,
+        userId: user.id,
+        username: user.username,
+        following: user.following,
+      })
     );
+    contentRef.current.textContent = '';
   };
   return (
     <div className="border-2 border-slate-700 rounded-lg min-h-full p-4 mb-4">
       <header className="flex text-white">
-        <CardHeader user={user} />
+        <CardHeader
+          userId={post?.userId}
+          username={post?.username || user?.username}
+          authUserId={user.id}
+        />
       </header>
       <div className="flex flex-col">
         <div
