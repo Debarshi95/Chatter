@@ -2,7 +2,7 @@ import { Form, Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AuthErrorCodes } from 'Firebase';
-import withAuthRoute from 'hoc/withAuthRoute';
+import { withAuthRoute } from 'hoc';
 
 import { Button, Text, Input } from 'components';
 import { validateLogin } from 'utils/formValidations';
