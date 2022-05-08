@@ -1,13 +1,16 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Loader, Navbar } from 'components';
+import { Loader, Navbar, NotFound } from 'components';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { auth, onAuthStateChanged } from 'Firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from 'store/reducers/slices';
+import { requestGetUserData } from 'store/reducers/slices/authSlice';
 
 const HomePage = lazy(() => import('./Home/Home'));
 const SignupPage = lazy(() => import('./Signup/Signup'));
 const SigninPage = lazy(() => import('./Signin/Signin'));
+const SearchPage = lazy(() => import('./Search/Search'));
+const ProfilePage = lazy(() => import('./Profile/Profile'));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -16,6 +19,7 @@ const App = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(setUser(user));
+        dispatch(requestGetUserData(user.uid));
       } else {
         dispatch(dispatch(setUser(null)));
       }
@@ -51,6 +55,23 @@ const App = () => {
               </Suspense>
             }
           />
+          <Route
+            path="/search"
+            element={
+              <Suspense fallback={<Loader />}>
+                <SearchPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/profile/:username"
+            element={
+              <Suspense fallback={<Loader />}>
+                <ProfilePage />
+              </Suspense>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>
