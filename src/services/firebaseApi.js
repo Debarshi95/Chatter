@@ -11,6 +11,7 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  setDoc,
   serverTimestamp,
   updateDoc,
   getDoc,
@@ -33,22 +34,25 @@ export const checkUserNameTaken = async (username = '') => {
 };
 
 export const createUser = ({ username, uid, email }) => {
-  return addDoc(collection(firestore, 'users'), {
-    uid,
+  return setDoc(doc(firestore, 'users', uid), {
     username,
     email,
     followers: [],
     following: [],
+    retweets: [],
+    likes: [],
+    comments: [],
     posts: [],
     updatedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
   });
 };
 
-export const createPost = ({ userId, content = '' }) => {
+export const createPost = ({ userId, content = '', username }) => {
   return addDoc(collection(firestore, 'posts'), {
     content,
     userId,
+    username,
     createdAt: serverTimestamp(),
   });
 };
@@ -58,10 +62,10 @@ export const deleteNote = (id) => {
   return deleteDoc(docRef);
 };
 
-export const getPosts = (userId) => {
+export const getPosts = (userId, followingIds = []) => {
   const queryRef = query(
     collection(firestore, 'posts'),
-    where('userId', '==', userId),
+    where('userId', 'in', [userId, ...followingIds]),
     orderBy('createdAt', 'desc')
   );
   return getDocs(queryRef);
@@ -70,11 +74,6 @@ export const getPosts = (userId) => {
 export const getDocById = (docId, path = '') => {
   const docRef = doc(firestore, path, docId);
   return getDoc(docRef);
-};
-
-export const getUserData = (userId) => {
-  const queryRef = query(collection(firestore, 'users'), where('uid', '==', userId));
-  return getDocs(queryRef);
 };
 
 export const updateUserPost = (docId, post) => {
@@ -92,8 +91,8 @@ export const updateUserStats = ({ docId, userId, type = 'UPDATE', path = 'follow
   });
 };
 
-export const getAllUsers = (currentUserId, collectionName = 'users') => {
-  const queryRef = query(collection(firestore, collectionName), where('uid', '!=', currentUserId));
+export const getAllUsers = (collectionName = 'users') => {
+  const queryRef = query(collection(firestore, collectionName), orderBy('createdAt', 'desc'));
   return getDocs(queryRef);
 };
 
