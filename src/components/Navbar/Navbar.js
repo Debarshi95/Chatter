@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { requestSignOut } from 'store/reducers/slices';
-import { selectUser } from 'store/selectors';
+import { selectAuthUser } from 'store/selectors';
 
 const Navbar = () => {
-  const user = useSelector(selectUser);
+  const user = useSelector(selectAuthUser);
   const dispatch = useDispatch();
 
   const handleSignout = () => {
@@ -25,7 +25,7 @@ const Navbar = () => {
             role="button"
             aria-hidden
             onClick={handleSignout}
-            className="inline-block py-2 px-2 cursor-pointer  ml-auto hover:bg-slate-900 rounded-md md:mr-2 md:px-6"
+            className="inline-block py-2 px-2 cursor-pointer md:text-xl ml-auto hover:bg-slate-900 rounded-md md:mr-2 md:px-6"
           >
             Signout
           </div>

@@ -15,6 +15,8 @@ import {
   updateDoc,
   getDoc,
   orderBy,
+  arrayUnion,
+  arrayRemove,
 } from 'Firebase';
 
 export const signup = async ({ email, password }) => {
@@ -35,43 +37,20 @@ export const createUser = ({ username, uid, email }) => {
     uid,
     username,
     email,
+    followers: [],
+    following: [],
+    posts: [],
+    updatedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
   });
 };
 
-export const createNote = ({
-  userId,
-  tags,
-  isPinned,
-  cardColor,
-  status,
-  priority = 'Low',
-  content = '',
-}) => {
-  return addDoc(collection(firestore, 'notes'), {
+export const createPost = ({ userId, content = '' }) => {
+  return addDoc(collection(firestore, 'posts'), {
     content,
     userId,
-    tags,
-    cardColor,
-    status,
-    isPinned,
-    priority,
     createdAt: serverTimestamp(),
   });
-};
-
-export const updateNote = ({
-  id,
-  userId,
-  tags,
-  isPinned,
-  cardColor,
-  status,
-  priority,
-  content = '',
-}) => {
-  const docRef = doc(firestore, 'notes', id);
-  return updateDoc(docRef, { userId, tags, isPinned, cardColor, status, priority, content });
 };
 
 export const deleteNote = (id) => {
@@ -79,24 +58,9 @@ export const deleteNote = (id) => {
   return deleteDoc(docRef);
 };
 
-export const getNotes = (userId) => {
-  const queryRef = query(collection(firestore, 'notes'), where('userId', '==', userId));
-  return getDocs(queryRef);
-};
-
-export const createTag = ({ tagName, value, userId, notes = [] }) => {
-  return addDoc(collection(firestore, 'tags'), {
-    tagName,
-    value,
-    userId,
-    notes,
-    createdAt: serverTimestamp(),
-  });
-};
-
-export const getTags = (userId) => {
+export const getPosts = (userId) => {
   const queryRef = query(
-    collection(firestore, 'tags'),
+    collection(firestore, 'posts'),
     where('userId', '==', userId),
     orderBy('createdAt', 'desc')
   );
@@ -107,4 +71,30 @@ export const getDocById = (docId, path = '') => {
   const docRef = doc(firestore, path, docId);
   return getDoc(docRef);
 };
+
+export const getUserData = (userId) => {
+  const queryRef = query(collection(firestore, 'users'), where('uid', '==', userId));
+  return getDocs(queryRef);
+};
+
+export const updateUserPost = (docId, post) => {
+  const docRef = doc(firestore, 'users', docId);
+  return updateDoc(docRef, {
+    posts: arrayUnion(post),
+  });
+};
+
+export const updateUserStats = ({ docId, userId, type = 'UPDATE', path = 'followers' }) => {
+  const docRef = doc(firestore, 'users', docId);
+  const arrayOperation = type === 'UPDATE' ? arrayUnion : arrayRemove;
+  return updateDoc(docRef, {
+    [path]: arrayOperation(userId),
+  });
+};
+
+export const getAllUsers = (currentUserId, collectionName = 'users') => {
+  const queryRef = query(collection(firestore, collectionName), where('uid', '!=', currentUserId));
+  return getDocs(queryRef);
+};
+
 export const signout = async () => signOut(auth);

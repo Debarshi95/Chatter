@@ -8,3 +8,9 @@ body {
 * {
   box-sizing: border-box;
 }
+[contentEditable='true']:empty:not(:focus):before {
+  content: attr(data-placeholder);
+}
+.h-80 {
+  height: 80vh;
+}
