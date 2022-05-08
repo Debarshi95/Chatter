@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Loader, Navbar, NotFound } from 'components';
 import { auth, onAuthStateChanged } from 'Firebase';
-import { setUser, requestGetUserData } from 'store/reducers/slices';
+import { setUser, requestGetAuthUserData } from 'store/reducers/slices';
 
 const HomePage = lazy(() => import('./Home/Home'));
 const SignupPage = lazy(() => import('./Signup/Signup'));
@@ -18,7 +18,7 @@ const App = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(setUser(user));
-        dispatch(requestGetUserData(user.uid));
+        dispatch(requestGetAuthUserData(user.uid));
       } else {
         dispatch(dispatch(setUser(null)));
       }
