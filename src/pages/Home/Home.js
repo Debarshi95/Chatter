@@ -17,7 +17,7 @@ const Home = () => {
   }, [authUser.uid, dispatch, authUser.following]);
 
   return (
-    <div className="p-4">
+    <div>
       <PostBox contentEditable user={authUser} />
       <section>
         {posts.map((post) => (

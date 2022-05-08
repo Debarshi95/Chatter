@@ -38,29 +38,30 @@ const Profile = () => {
   };
 
   return (
-    <div className="text-white p-4 md:w-3/5 mx-auto">
+    <div className="text-white p-4 md:w-4/5 mx-auto">
       <header className="flex items-center justify-center flex-col">
         <Text
           variant="div"
-          className="text-2xl bg-slate-600 h-36 w-36 rounded-full flex items-center justify-center"
+          className="text-2xl bg-slate-600 h-28 w-28 rounded-full flex items-center justify-center"
         >
-          <span className="text-5xl">{getFirstChar(user?.username)}</span>
+          <span className="text-4xl">{getFirstChar(user?.username)}</span>
         </Text>
         {user?.username && (
-          <Text className="text-2xl text-center my-4 text-gray-300 font-medium">{`@${user.username}`}</Text>
+          <Text className="text-2xl text-center text-gray-300 font-medium">{`@${user.username}`}</Text>
         )}
-        <Button
-          className="w-36 rounded-lg h-10  flex items-center justify-center text-slate-800"
-          onClick={handleButtonClick}
-        >
-          {isFollowingUser ? 'Following' : 'Follow'}
-        </Button>
+        {id !== authUser?.uid && (
+          <Button
+            className="w-36 rounded-lg h-10  flex items-center mt-2 justify-center text-slate-800"
+            onClick={handleButtonClick}
+          >
+            {isFollowingUser ? 'Following' : 'Follow'}
+          </Button>
+        )}
 
         <Text className="md:w-3/4 mx-auto text-center text-lg my-4">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the standard dummy text ever since the 1500s, w
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
         </Text>
-        <div className="bg-gray-700 text-xl w-full md:w-3/4 p-4 rounded-md flex justify-between md:justify-evenly">
+        <div className="bg-gray-700 text-xl w-full md:w-3/4 p-2 rounded-md flex justify-between md:justify-evenly">
           <Text className="flex items-center justify-center flex-col">
             <span className="text-2xl">{user?.following?.length}</span>
             <span>Following</span>

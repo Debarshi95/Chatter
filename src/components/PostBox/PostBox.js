@@ -11,6 +11,8 @@ const PostBox = ({ contentEditable, post, user }) => {
   const contentRef = useRef(null);
   const dispatch = useDispatch();
 
+  const username = post?.username || user?.username || '';
+
   const handleCreatePost = () => {
     if (contentRef.current.textContent === '') return;
     dispatch(
@@ -51,11 +53,11 @@ const PostBox = ({ contentEditable, post, user }) => {
           return null;
       }
     },
-    [dispatch, post?.id, user.following, user.uid]
+    [dispatch, post?.id, user?.following, user?.uid]
   );
 
   const renderRetweetButton = useCallback(() => {
-    const tweeted = post?.retweets?.find((id) => id === user.uid) || false;
+    const tweeted = post?.retweets?.find((id) => id === user?.uid) || false;
     const type = tweeted ? 'DELETE' : 'UPDATE';
 
     return (
@@ -63,10 +65,10 @@ const PostBox = ({ contentEditable, post, user }) => {
         <AiOutlineRetweet className={cn('block hover:text-gray-300', { 'text-white': tweeted })} />
       </div>
     );
-  }, [handleOnButtonClick, post?.retweets, user.uid]);
+  }, [handleOnButtonClick, post?.retweets, user?.uid]);
 
   const renderLikeButton = useCallback(() => {
-    const liked = post?.likes?.find((id) => id === user.uid) || false;
+    const liked = post?.likes?.find((id) => id === user?.uid) || false;
     const type = liked ? 'DELETE' : 'UPDATE';
 
     return (
@@ -78,16 +80,12 @@ const PostBox = ({ contentEditable, post, user }) => {
         )}
       </div>
     );
-  }, [handleOnButtonClick, post?.likes, user.uid]);
+  }, [handleOnButtonClick, post?.likes, user?.uid]);
 
   return (
-    <div className="border-2 border-slate-700 rounded-lg min-h-full p-4 mb-4">
+    <div className="border-2 border-slate-700 rounded-lg p-4 mb-4">
       <header className="flex text-white">
-        <CardHeader
-          userId={post?.userId}
-          username={post?.username || user?.username}
-          authUserId={user.uid}
-        />
+        <CardHeader userId={post?.userId} username={username} authUserId={user?.uid} />
       </header>
       <div className="flex flex-col">
         <div

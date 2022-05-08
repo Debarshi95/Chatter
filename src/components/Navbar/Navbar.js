@@ -12,7 +12,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full bg-slate-700 bg-opacity-25 p-2">
+    <div className="w-full bg-slate-700 p-2 sticky top-0 z-50">
       <nav className="flex w-full md:w-11/12 mx-auto text-gray-200 items-center">
         <Link
           to={user ? '/' : 'signin'}
