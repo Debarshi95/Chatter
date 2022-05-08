@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { signup, checkUserNameTaken, createUser, signin, signout } from 'services/firebaseApi';
+import {
+  signup,
+  checkUserNameTaken,
+  createUser,
+  signin,
+  signout,
+  getUserData,
+} from 'services/firebaseApi';
 
 export const requestSignIn = createAsyncThunk(
   'auth/requestSignin',
@@ -9,6 +16,21 @@ export const requestSignIn = createAsyncThunk(
       return res;
     } catch (error) {
       return rejectWithValue({ message: error?.message, code: error?.code });
+    }
+  }
+);
+
+export const requestGetUserData = createAsyncThunk(
+  'auth/requestGetUserData',
+  async (uid, { rejectWithValue }) => {
+    try {
+      const res = await getUserData(uid);
+      if (res?.docs?.length) {
+        return { id: res.docs[0].id, ...res.docs[0].data() };
+      }
+      return null;
+    } catch (error) {
+      return rejectWithValue({ message: error?.message });
     }
   }
 );
@@ -75,6 +97,16 @@ const authSlice = createSlice({
       state.loading = false;
     },
     [requestSignUp.rejected]: (state, action) => {
+      state.user = null;
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [requestGetUserData.fulfilled]: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+      state.loading = false;
+      state.error = '';
+    },
+    [requestGetUserData.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;
