@@ -4,6 +4,7 @@ export {
   requestSignUp,
   setUser,
   requestSignOut,
+  requestGetUserData,
 } from './authSlice';
 
 export { default as postReducer, requestCreatePost, requestGetAllPosts } from './postSlice';
@@ -11,6 +12,6 @@ export { default as postReducer, requestCreatePost, requestGetAllPosts } from '.
 export { default as searchReducer, requestGetAllUsers } from './searchSlice';
 export {
   default as userReducer,
-  requestGetUserPosts,
+  requestGetUserProfilePosts,
   requestUpdateUserProfileData,
 } from './userSlice';

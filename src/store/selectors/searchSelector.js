@@ -1,10 +1,13 @@
 const selectSearchData = (state) => state.search;
 
-const selectUsers = (state) => state.search.users;
+const selectUsers = (authUserId) => (state) => {
+  const { users } = selectSearchData(state);
+  return users.filter((user) => user.id !== authUserId);
+};
 
 const selectUserById = (id) => (state) => {
-  const users = selectUsers(state);
-  return users.find((user) => user.uid === id);
+  const searchData = selectSearchData(state);
+  return searchData.users.find((user) => user.id === id);
 };
 
 export { selectUsers, selectUserById, selectSearchData };

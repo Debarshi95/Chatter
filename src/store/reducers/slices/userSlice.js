@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getPosts, updateUserStats } from 'services/firebaseApi';
+import { requestGetUserData } from './authSlice';
 import { requestGetAllUsers } from './searchSlice';
 
 export const requestUpdateUserProfileData = createAsyncThunk(
@@ -14,13 +15,14 @@ export const requestUpdateUserProfileData = createAsyncThunk(
       ]);
 
       dispatch(requestGetAllUsers());
+      dispatch(requestGetUserData(authUserId));
     } catch (error) {
       rejectWithValue(error);
     }
   }
 );
 
-export const requestGetUserPosts = createAsyncThunk(
+export const requestGetUserProfilePosts = createAsyncThunk(
   'post/getAllPosts',
   async (userId, { rejectWithValue }) => {
     try {
@@ -50,16 +52,16 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   extraReducers: {
-    [requestGetUserPosts.pending]: (state) => {
+    [requestGetUserProfilePosts.pending]: (state) => {
       state.loading = true;
       state.error = '';
     },
-    [requestGetUserPosts.fulfilled]: (state, action) => {
+    [requestGetUserProfilePosts.fulfilled]: (state, action) => {
       state.loading = false;
       state.posts = [...action.payload];
       state.error = '';
     },
-    [requestGetUserPosts.rejected]: (state, action) => {
+    [requestGetUserProfilePosts.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload?.message;
     },

@@ -3,11 +3,9 @@ import { getAllUsers } from 'services/firebaseApi';
 
 export const requestGetAllUsers = createAsyncThunk(
   'search/getAllUsers',
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState();
-    const { uid = '' } = state.auth?.user || {};
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await getAllUsers(uid, 'users');
+      const res = await getAllUsers();
 
       if (res?.docs?.length) {
         const docs = [];

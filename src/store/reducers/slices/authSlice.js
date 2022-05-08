@@ -5,11 +5,11 @@ import {
   createUser,
   signin,
   signout,
-  getUserData,
+  getDocById,
 } from 'services/firebaseApi';
 
 export const requestSignIn = createAsyncThunk(
-  'auth/requestSignin',
+  'auth/signin',
   async (inputData, { rejectWithValue }) => {
     try {
       const res = await signin(inputData);
@@ -21,12 +21,12 @@ export const requestSignIn = createAsyncThunk(
 );
 
 export const requestGetUserData = createAsyncThunk(
-  'auth/requestGetUserData',
+  'auth/getUserData',
   async (uid, { rejectWithValue }) => {
     try {
-      const res = await getUserData(uid);
-      if (res?.docs?.length) {
-        return { id: res.docs[0].id, ...res.docs[0].data() };
+      const res = await getDocById(uid, 'users');
+      if (res?.id) {
+        return { id: res.id, ...res.data() };
       }
       return null;
     } catch (error) {
@@ -36,7 +36,7 @@ export const requestGetUserData = createAsyncThunk(
 );
 
 export const requestSignUp = createAsyncThunk(
-  'auth/requestSignup',
+  'auth/signup',
   async (inputData, { rejectWithValue }) => {
     try {
       const { email, password, username } = inputData;
