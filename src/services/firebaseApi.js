@@ -9,7 +9,6 @@ import {
   query,
   where,
   addDoc,
-  deleteDoc,
   doc,
   setDoc,
   serverTimestamp,
@@ -39,9 +38,6 @@ export const createUser = ({ username, uid, email }) => {
     email,
     followers: [],
     following: [],
-    retweets: [],
-    likes: [],
-    comments: [],
     posts: [],
     updatedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
@@ -50,16 +46,14 @@ export const createUser = ({ username, uid, email }) => {
 
 export const createPost = ({ userId, content = '', username }) => {
   return addDoc(collection(firestore, 'posts'), {
+    likes: [],
+    retweets: [],
+    comments: [],
     content,
     userId,
     username,
     createdAt: serverTimestamp(),
   });
-};
-
-export const deleteNote = (id) => {
-  const docRef = doc(firestore, 'notes', id);
-  return deleteDoc(docRef);
 };
 
 export const getPosts = (userId, followingIds = []) => {
@@ -69,6 +63,14 @@ export const getPosts = (userId, followingIds = []) => {
     orderBy('createdAt', 'desc')
   );
   return getDocs(queryRef);
+};
+
+export const updatePost = ({ docId, data, type = 'UPDATE', path = 'likes' }) => {
+  const docRef = doc(firestore, 'posts', docId);
+  const arrayOperation = type === 'UPDATE' ? arrayUnion : arrayRemove;
+  return updateDoc(docRef, {
+    [path]: arrayOperation(data),
+  });
 };
 
 export const getDocById = (docId, path = '') => {
@@ -83,11 +85,11 @@ export const updateUserPost = (docId, post) => {
   });
 };
 
-export const updateUserStats = ({ docId, userId, type = 'UPDATE', path = 'followers' }) => {
+export const updateUserStats = ({ docId, data, type = 'UPDATE', path = 'followers' }) => {
   const docRef = doc(firestore, 'users', docId);
   const arrayOperation = type === 'UPDATE' ? arrayUnion : arrayRemove;
   return updateDoc(docRef, {
-    [path]: arrayOperation(userId),
+    [path]: arrayOperation(data),
   });
 };
 

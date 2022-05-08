@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createPost, getPosts, updateUserPost } from 'services/firebaseApi';
+import { createPost, getPosts, updatePost, updateUserPost } from 'services/firebaseApi';
 
 export const requestGetAllPosts = createAsyncThunk(
   'post/getAllPosts',
@@ -41,6 +41,20 @@ export const requestCreatePost = createAsyncThunk(
   }
 );
 
+export const requestUpdatePost = createAsyncThunk(
+  'post/updatePost',
+  async (postData, { rejectWithValue, dispatch }) => {
+    const { type, postId, userId, following, path } = postData;
+    try {
+      await updatePost({ docId: postId, data: userId, path, type });
+      dispatch(requestGetAllPosts({ userId, following }));
+
+      return null;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 const initialState = {
   posts: [],
   newPost: null,
