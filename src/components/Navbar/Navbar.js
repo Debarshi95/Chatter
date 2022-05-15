@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { requestSignOut } from 'store/reducers/slices';
+import { signout } from 'store/reducers/slices';
 import { selectAuthUser } from 'store/selectors';
 
 const Navbar = () => {
@@ -8,11 +8,11 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleSignout = () => {
-    dispatch(requestSignOut());
+    dispatch(signout());
   };
 
   return (
-    <div className="w-full bg-slate-700 p-2 sticky top-0 z-50">
+    <div className="w-full bg-slate-700 p-2 sticky top-0">
       <nav className="flex w-full md:w-11/12 mx-auto text-gray-200 items-center">
         <Link
           to={user ? '/' : 'signin'}
