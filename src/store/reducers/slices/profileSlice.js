@@ -1,12 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getDownloadURL } from 'Firebase';
-import {
-  getDocById,
-  getPosts,
-  updateUserInfo as updateProfileInfo,
-  uploadAvatar,
-} from 'services/firebaseApi';
+import { getDocById, getPosts } from 'services/firebaseApi';
 
 export const getProfileData = createAsyncThunk(
   'profile/getProfileData',
@@ -30,43 +23,8 @@ export const getProfileData = createAsyncThunk(
   }
 );
 
-export const updateUserInfo = createAsyncThunk(
-  'profile/updateUserInfo',
-  async (userData, { rejectWithValue }) => {
-    const { avatar: file, username, bio, userId } = userData;
-
-    try {
-      let url;
-      if (typeof file === 'object') {
-        const res = await uploadAvatar(file);
-        if (res.ref.name) {
-          url = await getDownloadURL(res.ref);
-          await updateProfileInfo({ userId, username, bio, avatar: url || '' });
-        }
-      } else {
-        await updateProfileInfo({ userId, username, bio, avatar: file });
-      }
-
-      return { ...userData, avatar: file || url };
-    } catch (error) {
-      rejectWithValue(error);
-    }
-    return null;
-  }
-);
-
 const initialState = {
-  user: {
-    followers: [],
-    following: [],
-    posts: [],
-    retweets: [],
-    likes: [],
-    loading: false,
-    username: '',
-    bio: '',
-    avatar: '',
-  },
+  user: {},
   error: '',
 };
 const profileSlice = createSlice({
@@ -82,18 +40,6 @@ const profileSlice = createSlice({
       state.user = action.payload;
     },
     [getProfileData.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload?.message;
-    },
-    [updateUserInfo.pending]: (state) => {
-      state.loading = true;
-      state.error = '';
-    },
-    [updateUserInfo.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.user = { ...state.user, ...action.payload };
-    },
-    [updateUserInfo.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload?.message;
     },

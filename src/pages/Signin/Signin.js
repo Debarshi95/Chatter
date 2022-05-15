@@ -7,7 +7,7 @@ import { withAuthRoute } from 'hoc';
 import { Button, Text, Input } from 'components';
 import { validateLogin } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
-import { requestSignIn } from 'store/reducers/slices';
+import { signin } from 'store/reducers/slices';
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Signin = () => {
     let message;
 
     try {
-      const res = await dispatch(requestSignIn(values)).unwrap();
+      const res = await dispatch(signin(values)).unwrap();
 
       if (res?.id) {
         navigate('/', { replace: true });
@@ -80,7 +80,7 @@ const Signin = () => {
                 <Button
                   component="button"
                   type="submit"
-                  className="mt-4 rounded-md text-slate-800"
+                  className="mt-4 p-2 text-gray-200 rounded-md text-lg"
                   disabled={Boolean(
                     isSubmitting || !touched || values.email === '' || values.password === ''
                   )}

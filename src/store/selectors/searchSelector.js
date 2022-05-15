@@ -10,4 +10,5 @@ const selectUserById = (id) => (state) => {
   return searchData.users.find((user) => user.id === id);
 };
 
-export { selectUsers, selectUserById, selectSearchData };
+const selectTrendingPosts = (state) => state.search.posts;
+export { selectUsers, selectUserById, selectSearchData, selectTrendingPosts };
