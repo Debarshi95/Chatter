@@ -39,12 +39,10 @@ const Sidebar = () => {
   return (
     <div
       className={cn(
-        'bg-slate-700 slide-out h-90 fixed top-16 md:sticky md:my-4 Md:mx-6 w-80 md:rounded-md p-4',
+        'bg-slate-700 slide-out h-90 fixed top-16 md:translate-x-0 sm:sticky md:slide-in md:my-4 md:ml-4 w-80 md:rounded-md p-4',
         {
           'slide-in': sidebarOpen,
-          // 'slide-out': !sidebarOpen,
-        },
-        'sm:relative'
+        }
       )}
     >
       <Text className="bg-slate-600 p-4 rounded-md text-gray-300 text-xl mb-2">

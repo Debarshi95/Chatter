@@ -31,7 +31,7 @@ const CardHeader = ({
 
         {showFollowButton && (
           <Button
-            className="w-32 border-2 border-slate-600 bg-slate-800 rounded-3xl h-10 ml-auto text-white"
+            className="w-32 border-2 border-slate-600 bg-slate-700 rounded-3xl h-10 ml-auto text-white"
             onClick={onClick}
           >
             {isFollowing ? 'Following' : 'Follow'}
