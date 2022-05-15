@@ -8,3 +8,6 @@ export { default as Loader } from './Loader/Loader';
 export { default as PostBox } from './PostBox/PostBox';
 export { default as CardHeader } from './CardHeader/CardHeader';
 export { default as Sidebar } from './Sidebar/Sidebar';
+export { default as Avatar } from './Avatar/Avatar';
+export { default as PostBoxFooter } from './PostBoxFooter/PostBoxFooter';
+export { default as EditProfileModal } from './EditProfileModal/EditProfileModal';

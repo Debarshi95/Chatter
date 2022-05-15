@@ -1,22 +1,22 @@
 export {
   default as authReducer,
-  requestSignIn,
-  requestSignUp,
+  signin,
+  signup,
   setUser,
-  requestSignOut,
-  requestGetAuthUserData,
+  signout,
+  getAuthUserData,
+  updateAuthUserProfile,
+  updateAuthUserData,
 } from './authSlice';
 
 export {
   default as postReducer,
-  requestCreatePost,
-  requestGetAllPosts,
-  requestUpdatePost,
+  createPost,
+  getAllPosts,
+  updatePost,
+  deletePost,
 } from './postSlice';
 
-export { default as searchReducer, requestGetAllUsers } from './searchSlice';
-export {
-  default as userReducer,
-  requestGetUserProfilePosts,
-  requestUpdateUserProfileData,
-} from './userSlice';
+export { default as searchReducer, getAllUsers, getTrendingPosts } from './searchSlice';
+export { default as profileReducer, getProfileData } from './profileSlice';
+export { default as sidebarReducer, setSidebarOpen } from './sidebarSlice';
