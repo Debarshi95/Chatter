@@ -101,7 +101,7 @@ export const getDocById = (docId, path = '') => {
 export const updateUserProfile = ({ docId, data, type = 'UPDATE', path = 'followers' }) => {
   const docRef = doc(firestore, 'users', docId);
   const arrayOperation = type === 'UPDATE' ? arrayUnion : arrayRemove;
-  console.log({ docId, data, type, path });
+
   return updateDoc(docRef, {
     [path]: arrayOperation(data),
   });
@@ -132,7 +132,6 @@ export const updateUserInfo = async ({ userId, ...rest }) => {
 };
 
 export const deletePost = async (postId) => {
-  console.log({ postId });
   const docRef = doc(firestore, 'posts', postId);
   return deleteDoc(docRef);
 };

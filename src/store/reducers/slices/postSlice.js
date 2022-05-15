@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   createPost as createNewPost,
   getDocById,
@@ -13,7 +12,6 @@ export const getAllPosts = createAsyncThunk(
   'post/getAllPosts',
   async (userData, { rejectWithValue }) => {
     const { userId, following } = userData;
-    console.log(userData);
     try {
       const res = await getPosts(userId, following);
       if (res?.docs) {
@@ -25,7 +23,7 @@ export const getAllPosts = createAsyncThunk(
             return post;
           })
         );
-        console.log(posts);
+
         return posts;
       }
       return null;

@@ -5,11 +5,7 @@ export const isFollowing = (user, authUserId) => {
 };
 
 export const generateFileFromUrl = async (url) => {
-  console.log({ url });
   const res = await fetch(url);
   const blob = await res.blob();
-
-  // const file = new File([blob], filename, { type: 'image/png' });
-  console.log({ blob });
   return blob;
 };
