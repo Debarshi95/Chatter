@@ -85,7 +85,6 @@ export const getPosts = (userId, followingIds = [], type = '') => {
 };
 
 export const updatePost = ({ docId, data, type = 'UPDATE', path = 'likes' }) => {
-  console.log({ docId, data, type, path });
   const docRef = doc(firestore, 'posts', docId);
   const arrayOperation = type === 'UPDATE' ? arrayUnion : arrayRemove;
   return updateDoc(docRef, {
