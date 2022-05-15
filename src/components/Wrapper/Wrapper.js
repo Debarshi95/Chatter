@@ -3,9 +3,9 @@ import { Outlet } from 'react-router-dom';
 
 const Wrapper = () => {
   return (
-    <main className="flex p-6">
+    <main className="flex">
       <Sidebar />
-      <div className="max-w-75 w-full">
+      <div className="w-full md:max-w-75">
         <Outlet />
       </div>
     </main>
