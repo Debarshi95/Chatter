@@ -1,9 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getDownloadURL } from 'Firebase';
 import {
   getDocById,
   getPosts,
-  updateUserProfile,
   updateUserInfo as updateProfileInfo,
   uploadAvatar,
 } from 'services/firebaseApi';
@@ -26,22 +26,6 @@ export const getProfileData = createAsyncThunk(
       return null;
     } catch (error) {
       return rejectWithValue(error);
-    }
-  }
-);
-
-export const updateProfileData = createAsyncThunk(
-  'profile/updateProfileData',
-  async (userData, { rejectWithValue }) => {
-    const { type, authUserId, userId } = userData;
-
-    try {
-      await Promise.all([
-        updateUserProfile({ docId: userId, type, data: authUserId, path: 'followers' }),
-        updateUserProfile({ docId: authUserId, type, data: userId, path: 'following' }),
-      ]);
-    } catch (error) {
-      rejectWithValue(error);
     }
   }
 );
