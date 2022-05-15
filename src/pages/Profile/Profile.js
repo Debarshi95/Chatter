@@ -1,89 +1,114 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { Button, PostBox, Text } from 'components';
+import { Avatar, Button, CardHeader, EditProfileModal, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
-import { requestGetUserProfilePosts, requestUpdateUserProfileData } from 'store/reducers/slices';
-import { selectAuthUser, selectUserPosts } from 'store/selectors';
-import { selectUserById } from 'store/selectors/searchSelector';
-import { getFirstChar, isFollowing } from 'utils/helperFuncs';
+import { getProfileData, updateProfileData } from 'store/reducers/slices';
+import { selectAuthUser, selectUserProfile } from 'store/selectors';
+import { isFollowing } from 'utils/helperFuncs';
 
 const Profile = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
     state: { id },
   } = useLocation();
 
   const dispatch = useDispatch();
-  const user = useSelector(selectUserById(id));
 
+  const user = useSelector(selectUserProfile);
   const authUser = useSelector(selectAuthUser);
-  const posts = useSelector(selectUserPosts);
 
-  const isFollowingUser = isFollowing(user, authUser.uid);
+  const isFollowingUser = isFollowing(user, authUser.id);
 
   useEffect(() => {
-    if (authUser?.uid && authUser.uid !== id) {
-      dispatch(requestGetUserProfilePosts(id));
+    if (user?.id !== id) {
+      dispatch(getProfileData(id));
     }
-  }, [authUser.uid, dispatch, id]);
+  }, [dispatch, id, user?.id]);
 
-  const handleButtonClick = () => {
+  const handleFollowClick = () => {
     const userId = user.id;
     const authUserId = authUser.id;
 
     if (!isFollowingUser) {
-      return dispatch(requestUpdateUserProfileData({ type: 'UPDATE', userId, authUserId }));
+      dispatch(updateProfileData({ type: 'UPDATE', userId, authUserId }));
+    } else {
+      dispatch(updateProfileData({ type: 'DELETE', userId, authUserId }));
     }
-    return dispatch(requestUpdateUserProfileData({ type: 'DELETE', userId, authUserId }));
+    dispatch(getProfileData(userId));
+  };
+
+  const handleModalOpen = (value) => {
+    setIsModalOpen(value);
   };
 
   return (
     <div className="text-white p-4 md:w-4/5 mx-auto">
-      <header className="flex items-center justify-center flex-col">
-        <Text
-          variant="div"
-          className="text-2xl bg-slate-600 h-28 w-28 rounded-full flex items-center justify-center"
-        >
-          <span className="text-4xl">{getFirstChar(user?.username)}</span>
-        </Text>
-        {user?.username && (
-          <Text className="text-2xl text-center text-gray-300 font-medium">{`@${user.username}`}</Text>
-        )}
-        {id !== authUser?.uid && (
-          <Button
-            className="w-36 rounded-lg h-10  flex items-center mt-2 justify-center text-slate-800"
-            onClick={handleButtonClick}
-          >
-            {isFollowingUser ? 'Following' : 'Follow'}
-          </Button>
-        )}
+      <header className="p-2">
+        <div className="flex justify-between text-white">
+          <Avatar url={user.avatar} alt={user.username} />
+          <div className="my-6">
+            {id !== authUser?.id ? (
+              <Button
+                className="border-2 border-slate-700 w-40 h-8 hover:bg-slate-900"
+                onClick={handleFollowClick}
+              >
+                {isFollowingUser ? 'Following' : 'Follow'}
+              </Button>
+            ) : (
+              <Button
+                className="border-2 border-slate-700 w-40 h-8 hover:bg-slate-900"
+                onClick={() => handleModalOpen(true)}
+              >
+                Edit Profile
+              </Button>
+            )}
+          </div>
+        </div>
 
-        <Text className="md:w-3/4 mx-auto text-center text-lg my-4">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        </Text>
-        <div className="bg-gray-700 text-xl w-full md:w-3/4 p-2 rounded-md flex justify-between md:justify-evenly">
-          <Text className="flex items-center justify-center flex-col">
-            <span className="text-2xl">{user?.following?.length}</span>
+        <div className="px-4 my-2">
+          {user?.username && (
+            <Text className="text-gray-300 text-xl text-start font-medium">{`@${user.username}`}</Text>
+          )}
+          <Text className="text-start text-lg">{user?.bio || 'No Bio found'}</Text>
+          <Text className="inline-block text-lg">
+            <span className="font-medium mr-1">{user?.following?.length}</span>
             <span>Following</span>
           </Text>
-          <Text className="flex items-center justify-center flex-col">
-            <span className="text-2xl">{user?.posts?.length}</span>
-            <span>Posts</span>
-          </Text>
-          <Text className="flex items-center justify-center flex-col">
-            <span className="text-2xl">{user?.followers?.length}</span>
+          <Text className="inline-block ml-2 text-lg">
+            <span className="font-medium mr-1">{user?.followers?.length}</span>
             <span>Followers</span>
           </Text>
         </div>
       </header>
       <section>
-        <Text className="text-2xl font-medium mt-6 mb-4">Latest Posts</Text>
-        <article>
-          {posts?.map((post) => (
-            <PostBox key={post.id} post={post} user={user} />
-          ))}
-        </article>
+        {user?.posts?.length ? (
+          <>
+            <Text className="text-2xl font-medium mb-4">Latest Posts</Text>
+            {user?.posts?.map((post) => (
+              <PostBox
+                key={post.id}
+                post={post}
+                headerComponent={
+                  <CardHeader
+                    avatarClassName="w-20 h-20"
+                    avatar={user?.avatar}
+                    userId={user?.userId}
+                    username={user?.username}
+                  />
+                }
+              />
+            ))}
+          </>
+        ) : (
+          <Text className="text-2xl font-medium mb-4 text-center mt-16">User has no post</Text>
+        )}
       </section>
+
+      {isModalOpen && (
+        <EditProfileModal isOpen={isModalOpen} onClose={handleModalOpen} user={user} />
+      )}
     </div>
   );
 };
