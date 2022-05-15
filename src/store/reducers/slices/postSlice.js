@@ -1,19 +1,32 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createPost, getPosts, updatePost, updateUserPost } from 'services/firebaseApi';
+/* eslint-disable no-unused-vars */
+import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
+import {
+  createPost as createNewPost,
+  getDocById,
+  getPosts,
+  updatePost as updatePostData,
+  deletePost as deleteUserPost,
+  updateUserProfile,
+} from 'services/firebaseApi';
 
-export const requestGetAllPosts = createAsyncThunk(
+export const getAllPosts = createAsyncThunk(
   'post/getAllPosts',
   async (userData, { rejectWithValue }) => {
     const { userId, following } = userData;
+    console.log(userData);
     try {
       const res = await getPosts(userId, following);
       if (res?.docs) {
-        const docs = [];
-        res.docs.forEach((doc) => {
-          docs.push({ id: doc.id, ...doc.data() });
-        });
-
-        return docs;
+        const posts = await Promise.all(
+          res.docs.map(async (doc) => {
+            const post = { id: doc.id, ...doc.data() };
+            const user = await getDocById(post.userId, 'users');
+            post.user = { id: user.id, ...user.data() };
+            return post;
+          })
+        );
+        console.log(posts);
+        return posts;
       }
       return null;
     } catch (error) {
@@ -22,42 +35,53 @@ export const requestGetAllPosts = createAsyncThunk(
   }
 );
 
-export const requestCreatePost = createAsyncThunk(
+export const createPost = createAsyncThunk(
   'post/createPost',
   async (postData, { rejectWithValue, dispatch }) => {
-    const { userId, content, following, username } = postData;
+    const { user, content } = postData;
     try {
-      const res = await createPost({ userId, content, username });
+      const res = await createNewPost({ userId: user.id, content, username: user.username });
       if (res?.id) {
         await Promise.all([
-          dispatch(requestGetAllPosts({ userId, following })),
-          updateUserPost(userId, res.id),
+          updateUserProfile({ data: res.id, docId: user.id, path: 'posts', type: 'UPDATE' }),
+          dispatch(getAllPosts({ userId: user.uid, following: user.following })),
         ]);
       }
-      return null;
     } catch (error) {
-      return rejectWithValue(error);
+      rejectWithValue(error);
     }
   }
 );
 
-export const requestUpdatePost = createAsyncThunk(
-  'post/updatePost',
-  async (postData, { rejectWithValue, dispatch }) => {
-    const { type, postId, userId, following, path } = postData;
+export const deletePost = createAsyncThunk(
+  'post/deletePost',
+  async ({ userId, postId }, { rejectWithValue }) => {
     try {
-      await updatePost({ docId: postId, data: userId, path, type });
-      dispatch(requestGetAllPosts({ userId, following }));
+      await Promise.all([
+        deleteUserPost(postId),
+        updateUserProfile({ data: postId, docId: userId, path: 'posts', type: 'DELETE' }),
+      ]);
+    } catch (error) {
+      rejectWithValue(error);
+    }
+  }
+);
 
-      return null;
+export const updatePost = createAsyncThunk(
+  'post/updatePost',
+  async (postData, { rejectWithValue }) => {
+    const { type, postId, userId, path } = postData;
+    try {
+      await updatePostData({ docId: postId, data: userId, path, type });
+      return postData;
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
+
 const initialState = {
   posts: [],
-  newPost: null,
   loading: false,
   error: '',
 };
@@ -65,28 +89,53 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   extraReducers: {
-    [requestCreatePost.pending]: (state) => {
+    [createPost.pending]: (state) => {
       state.loading = true;
       state.error = '';
     },
-    [requestCreatePost.fulfilled]: (state) => {
+    [createPost.fulfilled]: (state) => {
       state.loading = false;
       state.error = '';
     },
-    [requestCreatePost.rejected]: (state, action) => {
+    [createPost.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload?.message;
     },
-    [requestGetAllPosts.pending]: (state) => {
+    [updatePost.pending]: (state) => {
       state.loading = true;
       state.error = '';
     },
-    [requestGetAllPosts.fulfilled]: (state, action) => {
+    [updatePost.fulfilled]: (state, action) => {
+      const { postId, path, userId, type } = action.payload;
+
+      const postIndex = state.posts.findIndex((post) => post.id === postId);
+      if (type === 'DELETE') {
+        state.posts[postIndex][path].pop(userId);
+      } else {
+        state.posts[postIndex][path].push(userId);
+      }
+
+      state.error = '';
+      state.loading = false;
+    },
+    [updatePost.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message;
+    },
+    [getAllPosts.pending]: (state) => {
+      state.loading = true;
+      state.error = '';
+    },
+    [getAllPosts.fulfilled]: (state, action) => {
       state.loading = false;
       state.posts = [...action.payload];
       state.error = '';
     },
-    [requestGetAllPosts.rejected]: (state, action) => {
+    [getAllPosts.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message;
+    },
+    [deletePost.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload?.message;
     },

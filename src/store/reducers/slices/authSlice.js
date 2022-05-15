@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getDownloadURL } from 'Firebase';
 import {
   signup as userSignup,
   checkUserNameTaken,
@@ -7,6 +8,8 @@ import {
   signout as userSignout,
   getDocById,
   updateUserProfile,
+  uploadAvatar,
+  updateUserInfo as updateProfileInfo,
 } from 'services/firebaseApi';
 
 export const signin = createAsyncThunk('auth/signin', async (inputData, { rejectWithValue }) => {
@@ -54,7 +57,32 @@ export const signup = createAsyncThunk('auth/signup', async (inputData, { reject
 });
 
 export const updateAuthUserProfile = createAsyncThunk(
-  'auth/updateAuthUserProfile',
+  'profile/updateAuthUserProfile',
+  async (userData, { rejectWithValue }) => {
+    const { avatar: file, username, bio, userId } = userData;
+
+    try {
+      let url;
+      if (typeof file === 'object') {
+        const res = await uploadAvatar(file);
+        if (res.ref.name) {
+          url = await getDownloadURL(res.ref);
+          await updateProfileInfo({ userId, username, bio, avatar: url || '' });
+        }
+      } else {
+        await updateProfileInfo({ userId, username, bio, avatar: file });
+      }
+
+      return { ...userData, avatar: file || url };
+    } catch (error) {
+      rejectWithValue(error);
+    }
+    return null;
+  }
+);
+
+export const updateAuthUserData = createAsyncThunk(
+  'auth/updateAuthUserData',
   async (userData, { rejectWithValue }) => {
     const { type, authUserId, userId } = userData;
     try {
@@ -125,10 +153,8 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    [updateAuthUserProfile.fulfilled]: (state, action) => {
-      const {
-        payload: { type, userId },
-      } = action;
+    [updateAuthUserData.fulfilled]: (state, action) => {
+      const { type, userId } = action.payload;
 
       if (type === 'UPDATE') {
         state.user.following.push(userId);
@@ -137,7 +163,7 @@ const authSlice = createSlice({
       }
       state.error = '';
     },
-    [updateAuthUserProfile.rejected]: (state, action) => {
+    [updateAuthUserData.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;
