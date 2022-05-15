@@ -1,11 +1,12 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import { authReducer, postReducer, searchReducer, userReducer } from './slices';
+import { authReducer, postReducer, searchReducer, profileReducer, sidebarReducer } from './slices';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   posts: postReducer,
   search: searchReducer,
-  user: userReducer,
+  profile: profileReducer,
+  sidebar: sidebarReducer,
 });
 
 export default rootReducer;

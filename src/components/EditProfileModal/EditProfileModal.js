@@ -5,7 +5,7 @@ import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
 import { updateAuthUserProfile } from 'store/reducers/slices';
 
-ReactModal.setAppElement(document.querySelector('body'));
+ReactModal.setAppElement(document.getElementById('modalContainer'));
 
 const validFileExt = ['png', 'jpg', 'jpeg'];
 
@@ -52,14 +52,14 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
       onRequestClose={() => onClose(false)}
       style={{
         content: {
-          inset: 0,
+          inset: '6rem 0 0 0',
           position: 'fixed',
           border: 'none',
           background: '#334155',
           maxWidth: '24rem',
           width: '100%',
-          height: '90%',
-          margin: '2rem auto 0 auto',
+          height: '80%',
+          margin: '0 auto',
           zIndex: 999,
         },
         overlay: {
