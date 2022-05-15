@@ -1,36 +1,38 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { Text, Button } from 'components';
-import { getFirstChar } from 'utils/helperFuncs';
-import { requestUpdateUserProfileData } from 'store/reducers/slices';
+import { Text, Button, Avatar } from 'components';
 
-const CardHeader = ({ authUserId, username, userId, showFollowButton, isFollowing }) => {
-  const dispatch = useDispatch();
-
-  const handleOnClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isFollowing) {
-      return dispatch(requestUpdateUserProfileData({ type: 'UPDATE', userId, authUserId }));
-    }
-    return dispatch(requestUpdateUserProfileData({ type: 'DELETE', userId, authUserId }));
-  };
-
+const CardHeader = ({
+  username,
+  avatar,
+  avatarClassName,
+  userId,
+  showFollowButton,
+  isFollowing,
+  onClick,
+}) => {
   return (
     <Link to={`/profile/${username}`} state={{ id: userId }}>
       <div className="cursor-pointer flex items-center text-white  min-h-full">
-        <Text className="bg-slate-700 p-4 w-20 h-18 text-3xl  text-center rounded-lg mr-4">
-          {getFirstChar(username)}
-        </Text>
-        <div className="text-xl py-2">
-          <Text>{username}</Text>
-          {username && <Text className="text-base text-gray-300">{`@${username}`}</Text>}
-        </div>
+        {avatar ? (
+          <div className="flex">
+            <Avatar url={avatar} alt={username} className={avatarClassName} />
+            <div className="text-xl py-2 ml-2">
+              <Text>{username}</Text>
+              {username && <Text className="text-base text-gray-300">{`@${username}`}</Text>}
+            </div>
+          </div>
+        ) : (
+          <div className="text-xl py-2">
+            <Text>{username}</Text>
+            {username && <Text className="text-base text-gray-300">{`@${username}`}</Text>}
+          </div>
+        )}
+
         {showFollowButton && (
           <Button
-            className="w-32 rounded-lg h-10 ml-auto flex items-center justify-center text-slate-800"
-            onClick={handleOnClick}
+            className="w-32 border-2 border-slate-600 bg-slate-800 rounded-3xl h-10 ml-auto text-white"
+            onClick={onClick}
           >
             {isFollowing ? 'Following' : 'Follow'}
           </Button>
@@ -42,5 +44,6 @@ const CardHeader = ({ authUserId, username, userId, showFollowButton, isFollowin
 
 CardHeader.defaultProps = {
   showFollowButton: false,
+  onClick: () => null,
 };
 export default memo(CardHeader);

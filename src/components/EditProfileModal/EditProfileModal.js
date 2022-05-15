@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 import { useState } from 'react';
 import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
-import { updateUserInfo } from 'store/reducers/slices';
+import { updateAuthUserProfile } from 'store/reducers/slices';
 
 ReactModal.setAppElement(document.querySelector('body'));
 
@@ -42,7 +42,8 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
   };
 
   const handleUpdateProfile = () => {
-    dispatch(updateUserInfo({ ...userDetails, userId: user.id }));
+    if (user.username === '' || user.bio === '') return;
+    dispatch(updateAuthUserProfile({ ...userDetails, userId: user.id }));
     onClose(false);
   };
   return (
@@ -105,7 +106,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
           />
         </div>
         <Button
-          className="w-full rounded-md bg-slate-800 py-2 text-white hover:bg-slate-900"
+          className="w-full rounded-md bg-slate-500 py-2 text-white hover:bg-slate-600"
           onClick={handleUpdateProfile}
         >
           Update
