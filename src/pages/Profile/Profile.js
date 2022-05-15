@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Avatar, Button, CardHeader, EditProfileModal, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
-import { getProfileData, updateProfileData } from 'store/reducers/slices';
+import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
 import { selectAuthUser, selectUserProfile } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
 
@@ -22,20 +22,18 @@ const Profile = () => {
   const isFollowingUser = isFollowing(user, authUser.id);
 
   useEffect(() => {
-    if (user?.id !== id) {
-      dispatch(getProfileData(id));
-    }
+    dispatch(getProfileData(id));
   }, [dispatch, id, user?.id]);
 
   const handleFollowClick = () => {
     const userId = user.id;
     const authUserId = authUser.id;
 
-    if (!isFollowingUser) {
-      dispatch(updateProfileData({ type: 'UPDATE', userId, authUserId }));
-    } else {
-      dispatch(updateProfileData({ type: 'DELETE', userId, authUserId }));
+    let type = 'UPDATE';
+    if (isFollowingUser) {
+      type = 'DELETE';
     }
+    dispatch(updateAuthUserData({ type, userId, authUserId }));
     dispatch(getProfileData(userId));
   };
 
@@ -43,13 +41,18 @@ const Profile = () => {
     setIsModalOpen(value);
   };
 
+  const handleOnDeletePost = (postId) => {
+    dispatch(deletePost({ postId, userId: authUser.id }));
+    dispatch(getProfileData(authUser.id));
+  };
+
   return (
-    <div className="text-white p-4 md:w-4/5 mx-auto">
+    <div className="text-white p-4 md:w-4/5 mx-auto" id="modalContainer">
       <header className="p-2">
         <div className="flex justify-between text-white">
           <Avatar url={user.avatar} alt={user.username} />
           <div className="my-6">
-            {id !== authUser?.id ? (
+            {user.id !== authUser?.id ? (
               <Button
                 className="border-2 border-slate-700 w-40 h-8 hover:bg-slate-900"
                 onClick={handleFollowClick}
@@ -90,6 +93,9 @@ const Profile = () => {
               <PostBox
                 key={post.id}
                 post={post}
+                canDeletePost={user?.id === authUser.id}
+                onDeletePost={handleOnDeletePost}
+                user={user}
                 headerComponent={
                   <CardHeader
                     avatarClassName="w-20 h-20"
@@ -106,9 +112,7 @@ const Profile = () => {
         )}
       </section>
 
-      {isModalOpen && (
-        <EditProfileModal isOpen={isModalOpen} onClose={handleModalOpen} user={user} />
-      )}
+      <EditProfileModal isOpen={isModalOpen} onClose={handleModalOpen} user={user} />
     </div>
   );
 };
