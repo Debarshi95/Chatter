@@ -2,12 +2,23 @@ import cn from 'clsx';
 import { useState } from 'react';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 
-const Select = ({ className, defaultValue, dropdownClassName, options, onSelect }) => {
+const Select = ({
+  className,
+  defaultValue,
+  dropdownClassName,
+  options,
+  onSelect,
+  defaultMenuOpen,
+}) => {
   const [currentValue, setCurrentValue] = useState(defaultValue);
+  const [menuIsOpen, setMenuIsOpen] = useState(defaultMenuOpen);
 
   const handleOnSelect = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!defaultMenuOpen) {
+      setMenuIsOpen(false);
+    }
     onSelect(e.target.textContent);
     setCurrentValue(e.target.textContent);
   };
@@ -17,18 +28,20 @@ const Select = ({ className, defaultValue, dropdownClassName, options, onSelect 
       role="button"
       aria-hidden
       className={cn(
-        'flex cursor-pointer text-sm text-center bg-slate-700 w-32 ml-auto text-white py-2 px-2 rounded-md mb-4 items-center justify-between relative',
-        className
+        'flex cursor-pointer text-sm text-center bg-slate-700 w-32 ml-auto text-white rounded-md mb-4 items-center justify-between relative',
+        className,
+        { 'p-2': !defaultMenuOpen }
       )}
     >
-      {currentValue}
+      {!defaultMenuOpen && currentValue}
       <div
         className={cn(
-          'w-full absolute top-10 bg-transparent outline-none left-0 rounded-md',
+          'w-full absolute bg-transparent outline-none left-0 rounded-md',
           dropdownClassName
         )}
       >
-        {options?.length &&
+        {menuIsOpen &&
+          options?.length &&
           options.map((item, idx) => (
             <div
               role="option"
@@ -43,7 +56,9 @@ const Select = ({ className, defaultValue, dropdownClassName, options, onSelect 
             </div>
           ))}
       </div>
-      <BsFillCaretDownFill className="block" />
+      {!defaultMenuOpen && (
+        <BsFillCaretDownFill className="block" onClick={() => setMenuIsOpen(true)} />
+      )}
     </div>
   );
 };
@@ -53,5 +68,6 @@ Select.defaultProps = {
   options: [],
   onSelect: () => null,
   defaultValue: '',
+  defaultMenuOpen: false,
 };
 export default Select;

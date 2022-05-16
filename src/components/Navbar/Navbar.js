@@ -84,6 +84,8 @@ const Navbar = () => {
                   options={navbarSelectItems}
                   defaultValue={user.username}
                   onSelect={handleDropDown}
+                  defaultMenuOpen
+                  dropdownClassName="top-0"
                 />
               </div>
             )}
