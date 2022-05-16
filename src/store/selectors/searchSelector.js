@@ -10,5 +10,14 @@ const selectUserById = (id) => (state) => {
   return searchData.users.find((user) => user.id === id);
 };
 
-const selectTrendingPosts = (state) => state.search.posts;
+const selectTrendingPosts =
+  (type = '') =>
+  (state) => {
+    if (type) {
+      const { posts } = state.search;
+      const sortedPosts = posts.slice().sort((a, b) => b[type].length - a[type].length);
+      return [...sortedPosts];
+    }
+    return state.search.posts;
+  };
 export { selectUsers, selectUserById, selectSearchData, selectTrendingPosts };
