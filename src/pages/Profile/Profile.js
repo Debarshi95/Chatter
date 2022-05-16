@@ -47,48 +47,48 @@ const Profile = () => {
   };
 
   return (
-    <div className="text-white p-4 md:w-4/5 mx-auto" id="modalContainer">
-      <header className="p-2">
-        <div className="flex justify-between text-white">
+    <div className="text-white p-4 w-full mx-auto" id="modalContainer">
+      <header className="p-4 bg-slate-700 rounded-md">
+        <div className="flex text-white items-center">
           <Avatar url={user.avatar} alt={user.username} />
-          <div className="my-6">
-            {user.id !== authUser?.id ? (
-              <Button
-                className="border-2 border-slate-700 w-40 h-8 hover:bg-slate-900"
-                onClick={handleFollowClick}
-              >
-                {isFollowingUser ? 'Following' : 'Follow'}
-              </Button>
-            ) : (
-              <Button
-                className="border-2 border-slate-700 w-40 h-8 hover:bg-slate-900"
-                onClick={() => handleModalOpen(true)}
-              >
-                Edit Profile
-              </Button>
-            )}
-          </div>
-        </div>
+          <div className="my-2 w-2/3 ml-4">
+            <div className="flex items-center justify-between">
+              {user?.username && (
+                <Text className="text-gray-300 text-base text-start font-medium">{`@${user.username}`}</Text>
+              )}
 
-        <div className="px-4 my-2">
-          {user?.username && (
-            <Text className="text-gray-300 text-xl text-start font-medium">{`@${user.username}`}</Text>
-          )}
-          <Text className="text-start text-lg">{user?.bio || 'No Bio found'}</Text>
-          <Text className="inline-block text-lg">
-            <span className="font-medium mr-1">{user?.following?.length}</span>
-            <span>Following</span>
-          </Text>
-          <Text className="inline-block ml-2 text-lg">
-            <span className="font-medium mr-1">{user?.followers?.length}</span>
-            <span>Followers</span>
-          </Text>
+              {user.id !== authUser?.id ? (
+                <Button
+                  className="border-2 border-slate-500 w-36 h-8 hover:bg-slate-900"
+                  onClick={handleFollowClick}
+                >
+                  {isFollowingUser ? 'Following' : 'Follow'}
+                </Button>
+              ) : (
+                <Button
+                  className="border-2 border-slate-500 w-36 text-base h-8 hover:bg-slate-900"
+                  onClick={() => handleModalOpen(true)}
+                >
+                  Edit Profile
+                </Button>
+              )}
+            </div>
+            <Text className="text-start text-base my-2">{user?.bio || 'No Bio found'}</Text>
+            <Text className="inline-block text-base">
+              <span className="font-medium mr-1">{user?.following?.length}</span>
+              <span>Following</span>
+            </Text>
+            <Text className="inline-block ml-2 text-lg">
+              <span className="font-medium mr-1">{user?.followers?.length}</span>
+              <span>Followers</span>
+            </Text>
+          </div>
         </div>
       </header>
       <section>
         {user?.posts?.length ? (
           <>
-            <Text className="text-2xl font-medium mb-4">Latest Posts</Text>
+            <Text className="text-xl sm:text-xl font-medium my-4">Latest Posts</Text>
             {user?.posts?.map((post) => (
               <PostBox
                 key={post.id}
@@ -96,6 +96,7 @@ const Profile = () => {
                 canDeletePost={user?.id === authUser.id}
                 onDeletePost={handleOnDeletePost}
                 user={user}
+                onUpdatePost={() => dispatch(getProfileData(user.id))}
                 headerComponent={
                   <CardHeader
                     avatarClassName="w-20 h-20"

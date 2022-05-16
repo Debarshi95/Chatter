@@ -19,4 +19,3 @@ export {
 
 export { default as searchReducer, getAllUsers, getTrendingPosts } from './searchSlice';
 export { default as profileReducer, getProfileData } from './profileSlice';
-export { default as sidebarReducer, setSidebarOpen } from './sidebarSlice';

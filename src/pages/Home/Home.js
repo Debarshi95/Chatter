@@ -25,7 +25,7 @@ const Home = () => {
           <CardHeader
             avatarClassName="w-20 h-20"
             avatar={authUser?.avatar}
-            userId={authUser?.userId}
+            userId={authUser?.id}
             username={authUser?.username}
           />
         }

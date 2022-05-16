@@ -30,4 +30,13 @@ body {
     transform: translateX(0%);
     transititon: transform 3s;
   }
+  .max-w-50 {
+    max-width: 50%;
+  }
+}
+
+select {
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
 }
