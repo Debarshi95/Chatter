@@ -17,13 +17,13 @@ const CardHeader = ({
         {avatar ? (
           <div className="flex">
             <Avatar url={avatar} alt={username} className={avatarClassName} />
-            <div className="text-xl py-2 ml-2">
+            <div className="text-lg py-2 ml-2">
               <Text>{username}</Text>
               {username && <Text className="text-base text-gray-300">{`@${username}`}</Text>}
             </div>
           </div>
         ) : (
-          <div className="text-xl py-2">
+          <div className="text-sm py-2">
             <Text>{username}</Text>
             {username && <Text className="text-base text-gray-300">{`@${username}`}</Text>}
           </div>

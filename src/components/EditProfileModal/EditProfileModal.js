@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 import { useState } from 'react';
 import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
-import { updateAuthUserProfile } from 'store/reducers/slices';
+import { updateAuthUserProfile, getProfileData } from 'store/reducers/slices';
 
 ReactModal.setAppElement(document.getElementById('modalContainer'));
 
@@ -45,6 +45,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
     if (user.username === '' || user.bio === '') return;
     dispatch(updateAuthUserProfile({ ...userDetails, userId: user.id }));
     onClose(false);
+    dispatch(getProfileData(user.id));
   };
   return (
     <ReactModal
@@ -56,7 +57,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
           position: 'fixed',
           border: 'none',
           background: '#334155',
-          maxWidth: '24rem',
+          maxWidth: '28rem',
           width: '100%',
           height: '80%',
           margin: '0 auto',

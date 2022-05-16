@@ -1,12 +1,21 @@
 import sanitizeHtml from 'sanitize-html';
-import { BiComment } from 'react-icons/bi';
-import { MdOutlineDelete } from 'react-icons/md';
+import cn from 'clsx';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { BiComment } from 'react-icons/bi';
+import { MdOutlineDelete } from 'react-icons/md';
 import { CardHeader, Button, PostBoxFooter } from 'components';
 import { createPost } from 'store/reducers/slices';
 
-const PostBox = ({ contentEditable, post, headerComponent, user, canDeletePost, onDeletePost }) => {
+const PostBox = ({
+  contentEditable,
+  post,
+  headerComponent,
+  user,
+  canDeletePost,
+  onDeletePost,
+  onUpdatePost,
+}) => {
   const contentRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -27,11 +36,11 @@ const PostBox = ({ contentEditable, post, headerComponent, user, canDeletePost, 
         <CardHeader
           avatarClassName="w-20 h-20"
           avatar={post?.user?.avatar}
-          userId={post?.user?.userId}
+          userId={post?.user?.id}
           username={post?.user?.username}
         />
       )}
-      <div className="flex flex-col">
+      <div className="flex flex-col px-4">
         <div
           ref={contentRef}
           contentEditable={contentEditable}
@@ -47,12 +56,19 @@ const PostBox = ({ contentEditable, post, headerComponent, user, canDeletePost, 
             Post
           </Button>
         ) : (
-          <div className="flex text-gray-500 text-2xl  cursor-pointer">
-            <BiComment className="block mr-auto hover:text-white" />
-            <PostBoxFooter post={post} />
+          <div className="flex text-slate-300 text-2xl cursor-pointer">
+            <BiComment
+              className={
+                (cn('block mr-auto hover:text-slate-500 '),
+                {
+                  'mr-10': canDeletePost,
+                })
+              }
+            />
+            <PostBoxFooter post={post} onUpdate={onUpdatePost} />
             {canDeletePost && (
               <MdOutlineDelete
-                className="text-2xl text-white block ml-16 hover:text-white"
+                className="text-2xl block ml-4 md:ml-20 hover:text-white"
                 onClick={() => onDeletePost(post.id)}
               />
             )}
@@ -68,5 +84,7 @@ PostBox.defaultProps = {
   post: null,
   user: null,
   canDeletePost: false,
+  onDeletePost: null,
+  onUpdatePost: null,
 };
 export default PostBox;

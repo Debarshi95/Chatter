@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import cn from 'clsx';
 import { cloneElement } from 'react';
 import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from 'react-icons/ai';
@@ -13,14 +12,14 @@ const footerItems = [
   { name: 'bookmarks', outlined: <BsBookmark />, contained: <BsBookmarkFill /> },
 ];
 
-const PostBoxFooter = ({ post }) => {
+const PostBoxFooter = ({ post, onUpdate }) => {
   const dispatch = useDispatch();
 
   const user = useSelector(selectAuthUser);
 
   const handleOnButtonClick = (path = 'likes', type = 'UPDATE') => {
     if (type === 'UPDATE') {
-      return dispatch(
+      dispatch(
         updatePost({
           type,
           postId: post.id,
@@ -28,16 +27,19 @@ const PostBoxFooter = ({ post }) => {
           path,
         })
       );
+    } else {
+      dispatch(
+        updatePost({
+          type: 'DELETE',
+          postId: post.id,
+          userId: user.id,
+          path,
+        })
+      );
     }
-
-    return dispatch(
-      updatePost({
-        type: 'DELETE',
-        postId: post.id,
-        userId: user.id,
-        path,
-      })
-    );
+    if (onUpdate) {
+      onUpdate();
+    }
   };
 
   return (
@@ -48,7 +50,7 @@ const PostBoxFooter = ({ post }) => {
         const icon = postClicked ? item.contained : item.outlined;
         return (
           <div
-            className="text-slate-300 flex items-center"
+            className="text-inherit flex items-center"
             onClick={() => {
               const type = postClicked ? 'DELETE' : 'UPDATE';
               handleOnButtonClick(item.name, type);
@@ -58,7 +60,10 @@ const PostBoxFooter = ({ post }) => {
             key={item.name}
           >
             {cloneElement(icon, {
-              className: cn({ 'text-white': postClicked, 'text-xl': item.name === 'bookmarks' }),
+              className: cn({
+                'text-slate-500': postClicked,
+                'text-xl': item.name === 'bookmarks',
+              }),
             })}
             <p className="text-base ml-2">{itemLength}</p>
           </div>
