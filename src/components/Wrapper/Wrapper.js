@@ -1,13 +1,9 @@
-import { Sidebar } from 'components';
 import { Outlet } from 'react-router-dom';
 
 const Wrapper = () => {
   return (
-    <main className="flex">
-      <Sidebar />
-      <div className="w-full md:max-w-75">
-        <Outlet />
-      </div>
+    <main className="w-full mx-auto md:w-1/2">
+      <Outlet />
     </main>
   );
 };
