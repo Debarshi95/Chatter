@@ -13,6 +13,7 @@ const SearchPage = lazy(() => import('./Search/Search'));
 const ProfilePage = lazy(() => import('./Profile/Profile'));
 const IndexPage = lazy(() => import('components/Wrapper/Wrapper'));
 const TrendingPage = lazy(() => import('./Trending/Trending'));
+const CommentPage = lazy(() => import('./Comment/Comment'));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -83,6 +84,15 @@ const App = () => {
               element={
                 <Suspense fallback={<Loader />}>
                   <TrendingPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/comment/:postId"
+              index
+              element={
+                <Suspense fallback={<Loader />}>
+                  <CommentPage />
                 </Suspense>
               }
             />

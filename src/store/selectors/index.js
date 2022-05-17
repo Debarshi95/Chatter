@@ -1,5 +1,5 @@
-export { selectAuthUser } from './authSelector';
-export { selectPosts } from './postSelector';
+export { selectAuthUser, selectAuthState } from './authSelector';
+export { selectPosts, selectPostById } from './postSelector';
 export {
   selectUsers,
   selectSearchData,
@@ -7,3 +7,4 @@ export {
   selectTrendingPosts,
 } from './searchSelector';
 export { selectUserProfileState, selectUserProfile } from './profileSelector';
+export { selectPostComments } from './commentSelector';

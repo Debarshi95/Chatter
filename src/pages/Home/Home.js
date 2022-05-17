@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CardHeader, PostBox } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { selectPosts, selectAuthUser } from 'store/selectors';
-import { getAllPosts } from 'store/reducers/slices';
+import { createPost, getAllPosts } from 'store/reducers/slices';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -16,11 +16,17 @@ const Home = () => {
     }
   }, [authUser.uid, dispatch, authUser.following]);
 
+  const handleCreatePost = async (value) => {
+    dispatch(createPost({ content: value, user: authUser }));
+  };
+
   return (
     <div className="p-4">
       <PostBox
         contentEditable
         user={authUser}
+        onCreatePost={handleCreatePost}
+        showPostIcons={false}
         headerComponent={
           <CardHeader
             avatarClassName="w-20 h-20"

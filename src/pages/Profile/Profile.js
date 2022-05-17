@@ -49,36 +49,38 @@ const Profile = () => {
   return (
     <div className="text-white p-4 w-full mx-auto" id="modalContainer">
       <header className="p-4 bg-slate-700 rounded-md">
-        <div className="flex text-white items-center">
-          <Avatar url={user.avatar} alt={user.username} />
-          <div className="my-2 w-2/3 ml-4">
-            <div className="flex items-center justify-between">
+        <div className="flex text-white items-center justify-between">
+          <Avatar url={user.avatar} alt={user.username} className="w-28 h-28 md:w-36 md:h-36" />
+          <div className="my-2 flex-1 md:2/3 ml-4">
+            <div className="flex flex-col md:flex-row items-center justify-between">
               {user?.username && (
-                <Text className="text-gray-300 text-base text-start font-medium">{`@${user.username}`}</Text>
+                <Text className="text-gray-300 text-lg mb-2 md:mb-0 text-center w-full md:text-start font-medium">{`@${user.username}`}</Text>
               )}
 
               {user.id !== authUser?.id ? (
                 <Button
-                  className="border-2 border-slate-500 w-36 h-8 hover:bg-slate-900"
+                  className="border-2 border-slate-500 h-8 hover:bg-slate-900"
                   onClick={handleFollowClick}
                 >
                   {isFollowingUser ? 'Following' : 'Follow'}
                 </Button>
               ) : (
                 <Button
-                  className="border-2 border-slate-500 w-36 text-base h-8 hover:bg-slate-900"
+                  className="border-2 ml-auto border-slate-500 text-base h-8 hover:bg-slate-900"
                   onClick={() => handleModalOpen(true)}
                 >
                   Edit Profile
                 </Button>
               )}
             </div>
-            <Text className="text-start text-base my-2">{user?.bio || 'No Bio found'}</Text>
-            <Text className="inline-block text-base">
+            <Text className="text-base my-2 h-12 overflow-hidden text-ellipsis whitespace-pre-wrap">
+              {user?.bio || 'No Bio found'}
+            </Text>
+            <Text className="inline md:inline-block text-base">
               <span className="font-medium mr-1">{user?.following?.length}</span>
               <span>Following</span>
             </Text>
-            <Text className="inline-block ml-2 text-lg">
+            <Text className="inline md:inline-block ml-2 text-base">
               <span className="font-medium mr-1">{user?.followers?.length}</span>
               <span>Followers</span>
             </Text>
