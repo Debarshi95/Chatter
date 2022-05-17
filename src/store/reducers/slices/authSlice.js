@@ -1,43 +1,106 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { signup, checkUserNameTaken, createUser, signin, signout } from 'services/firebaseApi';
+import { getDownloadURL } from 'Firebase';
+import {
+  signup as userSignup,
+  checkUserNameTaken,
+  createUser,
+  signin as userSignin,
+  signout as userSignout,
+  getDocById,
+  updateUserProfile,
+  uploadAvatar,
+  updateUserInfo as updateProfileInfo,
+} from 'services/firebaseApi';
 
-export const requestSignIn = createAsyncThunk(
-  'auth/requestSignin',
-  async (inputData, { rejectWithValue }) => {
+export const signin = createAsyncThunk('auth/signin', async (inputData, { rejectWithValue }) => {
+  try {
+    await userSignin(inputData);
+  } catch (error) {
+    rejectWithValue({ message: error?.message, code: error?.code });
+  }
+});
+
+export const getAuthUserData = createAsyncThunk(
+  'auth/getAuthUserData',
+  async (user, { rejectWithValue, dispatch }) => {
     try {
-      const res = await signin(inputData);
-      return res;
+      const res = await getDocById(user.uid, 'users');
+      if (res?.id) {
+        const authUser = { id: res.id, ...user, ...res.data() };
+        localStorage.setItem('token', user.accessToken);
+        // eslint-disable-next-line no-use-before-define
+        dispatch(setUser(authUser));
+      }
     } catch (error) {
-      return rejectWithValue({ message: error?.message, code: error?.code });
+      rejectWithValue({ message: error?.message });
     }
   }
 );
 
-export const requestSignUp = createAsyncThunk(
-  'auth/requestSignup',
-  async (inputData, { rejectWithValue }) => {
+export const signup = createAsyncThunk('auth/signup', async (inputData, { rejectWithValue }) => {
+  try {
+    const { email, password, username } = inputData;
+    const resData = await checkUserNameTaken(username);
+
+    if (resData?.docs?.length) {
+      throw new Error('Username already taken!!');
+    }
+
+    const res = await userSignup({ email, password });
+    if (res?.user) {
+      await createUser({ username, email, uid: res.user.uid });
+    }
+  } catch (error) {
+    rejectWithValue({ message: error?.message, code: error?.code });
+  }
+});
+
+export const updateAuthUserProfile = createAsyncThunk(
+  'profile/updateAuthUserProfile',
+  async (userData, { rejectWithValue }) => {
+    const { avatar: file, username, bio, userId } = userData;
+
     try {
-      const { email, password, username } = inputData;
-      const resData = await checkUserNameTaken(username);
-
-      if (resData?.docs?.length) {
-        throw new Error('Username already taken!!');
+      let url;
+      if (typeof file === 'object') {
+        const res = await uploadAvatar(file);
+        if (res.ref.name) {
+          url = await getDownloadURL(res.ref);
+          await updateProfileInfo({ userId, username, bio, avatar: url || '' });
+        }
+      } else {
+        await updateProfileInfo({ userId, username, bio, avatar: file });
       }
 
-      const res = await signup({ email, password });
-      if (res?.user) {
-        const response = await createUser({ username, email, uid: res.user.uid });
-        return response;
-      }
-      return null;
+      return { ...userData, avatar: file || url };
     } catch (error) {
-      return rejectWithValue({ message: error?.message, code: error?.code });
+      rejectWithValue(error);
+    }
+    return null;
+  }
+);
+
+export const updateAuthUserData = createAsyncThunk(
+  'auth/updateAuthUserData',
+  async (userData, { rejectWithValue }) => {
+    const { type, authUserId, userId } = userData;
+    try {
+      await Promise.all([
+        updateUserProfile({ docId: userId, type, data: authUserId, path: 'followers' }),
+        updateUserProfile({ docId: authUserId, type, data: userId, path: 'following' }),
+      ]);
+      return userData;
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );
 
-export const requestSignOut = createAsyncThunk('auth/signout', async () => {
-  await signout();
+export const signout = createAsyncThunk('auth/signout', async (_, { dispatch }) => {
+  await userSignout();
+  localStorage.removeItem('token');
+  // eslint-disable-next-line no-use-before-define
+  dispatch(setUser(null));
 });
 
 const initialState = {
@@ -45,6 +108,7 @@ const initialState = {
   loading: false,
   error: '',
 };
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -55,26 +119,35 @@ const authSlice = createSlice({
     },
   },
   extraReducers: {
-    [requestSignIn.pending]: (state) => {
-      state.loading = true;
-      state.error = '';
-    },
-    [requestSignIn.fulfilled]: (state) => {
-      state.loading = false;
-    },
-    [requestSignIn.rejected]: (state, action) => {
+    [signin.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;
     },
-    [requestSignUp.pending]: (state) => {
+    [signup.rejected]: (state, action) => {
+      state.user = null;
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [getAuthUserData.pending]: (state) => {
       state.loading = true;
+    },
+    [getAuthUserData.rejected]: (state, action) => {
+      state.user = null;
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [updateAuthUserData.fulfilled]: (state, action) => {
+      const { type, userId } = action.payload;
+
+      if (type === 'UPDATE') {
+        state.user.following.push(userId);
+      } else {
+        state.user.following = state.user.following.filter((followingId) => followingId !== userId);
+      }
       state.error = '';
     },
-    [requestSignUp.fulfilled]: (state) => {
-      state.loading = false;
-    },
-    [requestSignUp.rejected]: (state, action) => {
+    [updateAuthUserData.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;

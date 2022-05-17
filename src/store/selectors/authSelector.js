@@ -1,3 +1,4 @@
-const selectUser = (state) => state.auth.user;
+const selectAuthUser = (state) => state.auth.user;
+const selectAuthState = (state) => state.auth;
 
-export { selectUser };
+export { selectAuthUser, selectAuthState };

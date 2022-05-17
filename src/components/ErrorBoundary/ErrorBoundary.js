@@ -25,8 +25,8 @@ class ErrorBoundary extends React.Component {
     const { children } = this.props;
     if (hasError) {
       return (
-        <div className="flex h-screen items-center justify-center">
-          <Text className="text-3xl text-slate-300">Oops! Some error occurred</Text>
+        <div className="bg-gray-800 flex h-screen items-center justify-center">
+          <Text className="text-3xl text-slate-300 text-center">Oops! Some error occurred</Text>
         </div>
       );
     }
