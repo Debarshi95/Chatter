@@ -1,3 +1,3 @@
 const selectPosts = (state) => state.posts.posts;
-
-export { selectPosts };
+const selectPostById = (id) => (state) => state.posts.posts.find((post) => post.id === id);
+export { selectPosts, selectPostById };

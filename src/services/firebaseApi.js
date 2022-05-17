@@ -111,11 +111,12 @@ export const getAllUsers = (collectionName = 'users') => {
   return getDocs(queryRef);
 };
 
-export const createComment = (text, userId, postId) => {
+export const createComment = ({ postId, userId, text, likes = [] }) => {
   return addDoc(collection(firestore, 'comments'), {
     text,
     userId,
     postId,
+    likes,
     createdAt: serverTimestamp(),
   });
 };
@@ -133,5 +134,14 @@ export const updateUserInfo = async ({ userId, ...rest }) => {
 export const deletePost = async (postId) => {
   const docRef = doc(firestore, 'posts', postId);
   return deleteDoc(docRef);
+};
+
+export const getAllComments = async (postId) => {
+  const queryRef = query(
+    collection(firestore, 'comments'),
+    where('postId', '==', postId),
+    orderBy('createdAt', 'desc')
+  );
+  return getDocs(queryRef);
 };
 export const signout = async () => signOut(auth);
