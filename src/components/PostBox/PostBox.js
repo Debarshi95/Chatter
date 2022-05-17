@@ -1,32 +1,35 @@
 import sanitizeHtml from 'sanitize-html';
 import cn from 'clsx';
 import { useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { BiComment } from 'react-icons/bi';
 import { MdOutlineDelete } from 'react-icons/md';
 import { CardHeader, Button, PostBoxFooter } from 'components';
-import { createPost } from 'store/reducers/slices';
+import { Link } from 'react-router-dom';
 
 const PostBox = ({
   contentEditable,
   post,
   headerComponent,
-  user,
   canDeletePost,
   onDeletePost,
   onUpdatePost,
+  onCreatePost,
+  placeholder,
+  onComment,
+  type,
+  showPostIcons,
 }) => {
   const contentRef = useRef(null);
-  const dispatch = useDispatch();
 
-  const handleCreatePost = () => {
+  const handlePostClick = () => {
     if (contentRef.current.textContent === '') return;
-    dispatch(
-      createPost({
-        content: contentRef.current.textContent,
-        user,
-      })
-    );
+
+    if (type === 'COMMENT') {
+      onComment(contentRef.current.textContent);
+    } else {
+      onCreatePost(contentRef.current.textContent);
+    }
+
     contentRef.current.textContent = '';
   };
 
@@ -42,29 +45,35 @@ const PostBox = ({
       )}
       <div className="flex flex-col px-4">
         <div
+          role="textbox"
+          aria-hidden
           ref={contentRef}
           contentEditable={contentEditable}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content || post?.text) }}
           className="bg-transparent my-6 text-lg outline-none w-full h-full text-gray-300"
-          data-placeholder="Write something interesting..."
+          data-placeholder={placeholder}
         />
-        {contentEditable ? (
+        {contentEditable && (
           <Button
             className="w-32 rounded-lg p-2 bg-slate-500 text-base text-white ml-auto"
-            onClick={handleCreatePost}
+            onClick={handlePostClick}
           >
             Post
           </Button>
-        ) : (
+        )}
+        {showPostIcons && (
           <div className="flex text-slate-300 text-2xl cursor-pointer">
-            <BiComment
-              className={
-                (cn('block mr-auto hover:text-slate-500 '),
-                {
-                  'mr-10': canDeletePost,
-                })
-              }
-            />
+            <Link to={`/comment/${post?.id}`} className="flex">
+              <BiComment
+                className={
+                  (cn('block mr-auto hover:text-slate-500 '),
+                  {
+                    'mr-10': canDeletePost,
+                  })
+                }
+              />
+              <p className="text-base ml-2">{post?.comments?.length}</p>
+            </Link>
             <PostBoxFooter post={post} onUpdate={onUpdatePost} />
             {canDeletePost && (
               <MdOutlineDelete
@@ -86,5 +95,10 @@ PostBox.defaultProps = {
   canDeletePost: false,
   onDeletePost: null,
   onUpdatePost: null,
+  placeholder: 'Write something interesting...',
+  onComment: () => null,
+  onCreatePost: () => null,
+  type: null,
+  showPostIcons: true,
 };
 export default PostBox;
