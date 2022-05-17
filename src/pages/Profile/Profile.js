@@ -54,26 +54,26 @@ const Profile = () => {
           <div className="my-2 flex-1 md:2/3 ml-4">
             <div className="flex flex-col md:flex-row items-center justify-between">
               {user?.username && (
-                <Text className="text-gray-300 text-lg mb-2 md:mb-0 text-center w-full md:text-start font-medium">{`@${user.username}`}</Text>
+                <Text className="text-gray-300 text-lg mb-2 md:mb-0 text-center md:text-start font-medium">{`@${user.username}`}</Text>
               )}
 
               {user.id !== authUser?.id ? (
                 <Button
-                  className="border-2 border-slate-500 h-8 hover:bg-slate-900"
+                  className="border-2 border-slate-500 h-8 md:w-32 hover:bg-slate-900"
                   onClick={handleFollowClick}
                 >
                   {isFollowingUser ? 'Following' : 'Follow'}
                 </Button>
               ) : (
                 <Button
-                  className="border-2 ml-auto border-slate-500 text-base h-8 hover:bg-slate-900"
+                  className="border-2 ml-auto border-slate-500 text-base h-8 md:w-32 hover:bg-slate-900"
                   onClick={() => handleModalOpen(true)}
                 >
                   Edit Profile
                 </Button>
               )}
             </div>
-            <Text className="text-base my-2 h-12 overflow-hidden text-ellipsis whitespace-pre-wrap">
+            <Text className="text-base my-2 max-w-10 md:max-w-full no-wrap md:whitespace-normal text-ellipsis overflow-hidden">
               {user?.bio || 'No Bio found'}
             </Text>
             <Text className="inline md:inline-block text-base">

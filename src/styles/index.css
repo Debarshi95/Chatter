@@ -33,10 +33,20 @@ body {
   .max-w-50 {
     max-width: 50%;
   }
+  .max-w-10 {
+    max-width: 10rem;
+  }
+  .max-w-full {
+    max-width: 100%;
+  }
 }
 
 select {
   -moz-appearance: none; /* Firefox */
   -webkit-appearance: none; /* Safari and Chrome */
   appearance: none;
+}
+
+.no-wrap {
+  white-space: nowrap;
 }
