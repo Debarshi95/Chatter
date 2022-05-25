@@ -39,6 +39,9 @@ body {
   .max-w-full {
     max-width: 100%;
   }
+  .border-1 {
+    border-width: 1px;
+  }
 }
 
 select {
