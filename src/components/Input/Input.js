@@ -9,22 +9,22 @@ const Input = ({ hasLabel, className, label, ...props }) => {
     <>
       <input
         className={cn(
-          'bg-slate-700 text-gray-200 placeholder-gray-400 p-3 rounded-md w-full my-2 outline-none',
+          'bg-gray-800 text-gray-200 placeholder-gray-400 py-2 px-3 rounded-md w-full my-2 outline-none',
           className
         )}
         {...field}
         {...props}
       />
       {meta.touched && meta.error ? (
-        <div className="text-red-600 text-sm sm:text-base">{meta.error}</div>
+        <div className="text-red-600 text-sm font-semibold">{meta.error}</div>
       ) : null}
     </>
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full text-base border-gray-500">
       {hasLabel && (
-        <label htmlFor={props.id || props.name} className="block text-gray-400 md:text-lg">
+        <label htmlFor={props.id || props.name} className="block text-white">
           {label}
         </label>
       )}

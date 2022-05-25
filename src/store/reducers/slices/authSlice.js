@@ -16,8 +16,9 @@ export const signin = createAsyncThunk('auth/signin', async (inputData, { reject
   try {
     await userSignin(inputData);
   } catch (error) {
-    rejectWithValue({ message: error?.message, code: error?.code });
+    return rejectWithValue({ message: error?.message, code: error?.code });
   }
+  return null;
 });
 
 export const getAuthUserData = createAsyncThunk(
