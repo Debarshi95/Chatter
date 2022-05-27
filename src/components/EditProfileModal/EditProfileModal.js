@@ -1,19 +1,18 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import ReactModal from 'react-modal';
 import { useState } from 'react';
 import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
-import { updateAuthUserProfile, getProfileData } from 'store/reducers/slices';
+import { updateAuthUserProfile, setProfileState } from 'store/reducers/slices';
+import { validImageTypes } from 'constants/fileTypes';
 
-ReactModal.setAppElement(document.getElementById('modalContainer'));
-
-const validFileExt = ['png', 'jpg', 'jpeg'];
+ReactModal.setAppElement('#root');
 
 const EditProfileModal = ({ isOpen, onClose, user }) => {
   const [userDetails, setUserDetails] = useState({
     username: user.username,
     bio: user.bio,
     avatar: user.avatar,
+    fullname: user?.fullname || '',
   });
   const [error, setError] = useState('');
 
@@ -23,7 +22,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
     const file = e.target.files[0];
     const fileType = file.type.split('/')[1];
 
-    if (!validFileExt.includes(fileType)) {
+    if (!validImageTypes.includes(fileType)) {
       return setError('Only images of type png/jpg or jpeg allowed');
     }
 
@@ -41,11 +40,11 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
     });
   };
 
-  const handleUpdateProfile = () => {
+  const handleUpdateProfile = async () => {
     if (user.username === '' || user.bio === '') return;
     dispatch(updateAuthUserProfile({ ...userDetails, userId: user.id }));
+    dispatch(setProfileState(true));
     onClose(false);
-    dispatch(getProfileData(user.id));
   };
   return (
     <ReactModal
@@ -56,7 +55,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
           inset: '6rem 0 0 0',
           position: 'fixed',
           border: 'none',
-          background: '#334155',
+          background: '#1F2937',
           maxWidth: '28rem',
           width: '100%',
           height: '80%',
@@ -68,46 +67,59 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
         },
       }}
     >
-      <div className="p-2">
-        <input
-          id="avatar"
-          type="file"
-          title="Change your avatar"
-          className="bg-transparent hidden"
-          onChange={handleUploadImage}
-        />
-        <label htmlFor="avatar">
-          <Avatar
-            className="mx-auto w-48 h-48 mb-2 cursor-pointer"
-            url={
-              typeof userDetails.avatar === 'object'
-                ? URL.createObjectURL(userDetails.avatar)
-                : userDetails.avatar
-            }
-            alt={userDetails.username}
-          />
-        </label>
-        <Text className="text-xl">{error}</Text>
-        <div>
+      <div className="p-2 text-white font-light">
+        <div className="flex items-center">
+          <Text className="mr-20">Avatar :</Text>
           <input
-            type="text"
-            placeholder="Username"
-            className="w-full bg-gray-200 p-2 rounded-md my-2"
-            value={userDetails.username}
-            name="username"
-            onChange={handleInputChange}
+            id="avatar"
+            type="file"
+            title="Change your avatar"
+            className="bg-transparent hidden"
+            onChange={handleUploadImage}
           />
-          <textarea
-            className="w-full bg-gray-200 p-2 my-2 h-32 rounded-md resize-none"
-            maxLength="200"
-            placeholder="Bio"
-            name="bio"
-            value={userDetails.bio}
-            onChange={handleInputChange}
-          />
+          <label htmlFor="avatar">
+            <Avatar
+              className="mx-auto w-28 h-28 mb-2 cursor-pointer"
+              url={
+                typeof userDetails.avatar === 'object'
+                  ? URL.createObjectURL(userDetails.avatar)
+                  : userDetails.avatar
+              }
+              alt={userDetails.username}
+            />
+          </label>
+        </div>
+        <Text className="text-sm text-center font-normal text-red-600">{error}</Text>
+        <div>
+          <label className="flex mb-1">
+            Username : <Text className="text-center ml-4 font-medium">{userDetails.username}</Text>
+          </label>
+          <label>
+            Fullname :
+            <input
+              type="text"
+              placeholder="Fullname"
+              className="w-full border-blue-500 bg-slate-700 border p-2 rounded-md my-2"
+              value={userDetails.fullname}
+              name="fullname"
+              onChange={handleInputChange}
+            />
+          </label>
+
+          <label>
+            Bio :
+            <textarea
+              className="w-full border-blue-500 bg-slate-700 border p-2 my-2 h-32 rounded-md resize-none"
+              maxLength="200"
+              placeholder="Bio"
+              name="bio"
+              value={userDetails.bio}
+              onChange={handleInputChange}
+            />
+          </label>
         </div>
         <Button
-          className="w-full rounded-md bg-slate-500 py-2 text-white hover:bg-slate-600"
+          className="w-full rounded-md bg-blue-500 py-2 text-white hover:bg-blue-600"
           onClick={handleUpdateProfile}
         >
           Update

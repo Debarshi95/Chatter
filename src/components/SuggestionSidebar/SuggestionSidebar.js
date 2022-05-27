@@ -38,7 +38,7 @@ const SuggestionSidebar = () => {
           >
             <Avatar url={user.avatar} alt={user.username} className="h-12 w-12 mr-2" />
             <div className="text-gray-300">
-              <Text className="text-base">{user.username}</Text>
+              <Text className="text-base">{user?.fullname || user.username}</Text>
               <Text className="text-sm text-slate-400 font-sans">
                 {user?.fullname || `@${user.username}`}
               </Text>

@@ -1,5 +1,5 @@
 export { selectAuthUser, selectAuthState } from './authSelector';
-export { selectPosts, selectPostById } from './postSelector';
+export { selectPosts, selectPostById, selectPostState } from './postSelector';
 export {
   selectUsers,
   selectSearchData,

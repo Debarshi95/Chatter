@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getDownloadURL } from 'firebase/storage';
 import {
   createPost as createNewPost,
   getDocById,
@@ -6,6 +7,7 @@ import {
   updatePost as updatePostData,
   deletePost as deleteUserPost,
   updateUserProfile,
+  uploadPostImage,
 } from 'services/firebaseApi';
 
 export const getAllPosts = createAsyncThunk(
@@ -36,9 +38,19 @@ export const getAllPosts = createAsyncThunk(
 export const createPost = createAsyncThunk(
   'post/createPost',
   async (postData, { rejectWithValue, dispatch }) => {
-    const { user, content } = postData;
+    const { user, content, image } = postData;
     try {
-      const res = await createNewPost({ userId: user.id, content, username: user.username });
+      let url;
+      const imgRes = await uploadPostImage(image);
+      if (imgRes.ref.name) {
+        url = await getDownloadURL(imgRes.ref);
+      }
+      const res = await createNewPost({
+        userId: user.id,
+        content,
+        image: url,
+        username: user.username,
+      });
       if (res?.id) {
         await Promise.all([
           updateUserProfile({ data: res.id, docId: user.id, path: 'posts', type: 'UPDATE' }),
@@ -82,6 +94,7 @@ const initialState = {
   posts: [],
   loading: false,
   error: '',
+  isUploading: false,
 };
 const postSlice = createSlice({
   name: 'post',
@@ -89,14 +102,17 @@ const postSlice = createSlice({
   extraReducers: {
     [createPost.pending]: (state) => {
       state.loading = true;
+      state.isUploading = true;
       state.error = '';
     },
     [createPost.fulfilled]: (state) => {
       state.loading = false;
+      state.isUploading = false;
       state.error = '';
     },
     [createPost.rejected]: (state, action) => {
       state.loading = false;
+      state.isUploading = false;
       state.error = action.payload?.message;
     },
     [updatePost.pending]: (state) => {
