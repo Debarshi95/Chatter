@@ -32,7 +32,7 @@ const Search = () => {
   };
 
   return (
-    <div className="bg-green w-full p-4">
+    <div className="flex-1 p-2">
       <Select
         options={selectOptions}
         defaultValue="Filters"

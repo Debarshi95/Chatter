@@ -21,7 +21,7 @@ const Home = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-2 flex-1">
       <PostBox
         contentEditable
         user={authUser}
@@ -29,7 +29,7 @@ const Home = () => {
         showPostIcons={false}
         headerComponent={
           <CardHeader
-            avatarClassName="w-20 h-20"
+            avatarClassName="w-16 h-16"
             avatar={authUser?.avatar}
             userId={authUser?.id}
             username={authUser?.username}

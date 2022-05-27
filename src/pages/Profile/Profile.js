@@ -47,44 +47,48 @@ const Profile = () => {
   };
 
   return (
-    <div className="text-white p-4 w-full mx-auto" id="modalContainer">
-      <header className="p-4 bg-slate-700 rounded-md">
-        <div className="flex text-white items-center justify-between">
-          <Avatar url={user.avatar} alt={user.username} className="w-28 h-28 md:w-36 md:h-36" />
-          <div className="my-2 flex-1 md:2/3 ml-4">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              {user?.username && (
-                <Text className="text-gray-300 text-lg mb-2 md:mb-0 text-center md:text-start font-medium">{`@${user.username}`}</Text>
-              )}
+    <div className="text-gray-300 p-2 flex-1 md:ml-4" id="modalContainer">
+      <header className="flex flex-col md:flex-row justify-between rounded-md">
+        <div className="flex justify-center">
+          <Avatar url={user.avatar} alt={user.username} className="w-36 h-36" />
+        </div>
+        <div className="mt-2 text-center md:text-left flex-1 md:2/3 md:ml-4">
+          {user?.fullname ||
+            (user?.username && (
+              <div className="mb-2 md:mb-0 font-sans">
+                <Text className="font-semibold text-xl">{user.fullname || user.username}</Text>
+                <Text className="text-base text-gray-400 font-light">{`@${user.username}`}</Text>
+              </div>
+            ))}
 
-              {user.id !== authUser?.id ? (
-                <Button
-                  className="border-2 border-slate-500 h-8 md:w-32 hover:bg-slate-900"
-                  onClick={handleFollowClick}
-                >
-                  {isFollowingUser ? 'Following' : 'Follow'}
-                </Button>
-              ) : (
-                <Button
-                  className="border-2 ml-auto border-slate-500 text-base h-8 md:w-32 hover:bg-slate-900"
-                  onClick={() => handleModalOpen(true)}
-                >
-                  Edit Profile
-                </Button>
-              )}
-            </div>
-            <Text className="text-base my-2 max-w-10 md:max-w-full no-wrap md:whitespace-normal text-ellipsis overflow-hidden">
-              {user?.bio || 'No Bio found'}
-            </Text>
-            <Text className="inline md:inline-block text-base">
-              <span className="font-medium mr-1">{user?.following?.length}</span>
-              <span>Following</span>
-            </Text>
-            <Text className="inline md:inline-block ml-2 text-base">
-              <span className="font-medium mr-1">{user?.followers?.length}</span>
-              <span>Followers</span>
-            </Text>
-          </div>
+          <Text className="text-base my-2 text-center font-extralight md:text-left">
+            {user?.bio || 'No Bio found'}
+          </Text>
+          <Text className="inline md:inline-block text-base">
+            <span className="font-medium mr-1">{user?.following?.length}</span>
+            <span className="font-extralight">Following</span>
+          </Text>
+          <Text className="inline md:inline-block ml-2 text-base">
+            <span className="font-medium mr-1">{user?.followers?.length}</span>
+            <span className="font-extralight">Followers</span>
+          </Text>
+        </div>
+        <div className="translate-y-4 mb-2">
+          {user.id !== authUser?.id ? (
+            <Button
+              className="border border-slate-500 h-8 md:w-32 hover:bg-slate-900"
+              onClick={handleFollowClick}
+            >
+              {isFollowingUser ? 'Following' : 'Follow'}
+            </Button>
+          ) : (
+            <Button
+              className="border ml-auto border-slate-500 text-base h-8 md:w-32 hover:bg-slate-900"
+              onClick={() => handleModalOpen(true)}
+            >
+              Edit Profile
+            </Button>
+          )}
         </div>
       </header>
       <section>

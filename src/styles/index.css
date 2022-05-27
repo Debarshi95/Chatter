@@ -17,11 +17,8 @@ body {
 .h-90 {
   height: 90vh;
 }
-.max-w-75 {
-  max-width: 75%;
-}
 
-@layer {
+@layer base {
   .slide-out {
     transform: translateX(-120%);
     transititon: transform 3s;
@@ -41,6 +38,16 @@ body {
   }
   .border-1 {
     border-width: 1px;
+  }
+  .max-w-75 {
+    max-width: 75%;
+  }
+
+  .max-w-85 {
+    max-width: 85%;
+  }
+  .min-h-20 {
+    min-height: 20rem;
   }
 }
 
