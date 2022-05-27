@@ -16,9 +16,11 @@ const Home = () => {
     }
   }, [authUser.uid, dispatch, authUser.following]);
 
-  const handleCreatePost = async (value) => {
-    dispatch(createPost({ content: value, user: authUser }));
+  const handleCreatePost = async (data) => {
+    dispatch(createPost({ ...data, user: authUser }));
   };
+
+  console.log(posts);
 
   return (
     <div className="p-2 flex-1">
@@ -33,6 +35,7 @@ const Home = () => {
             avatar={authUser?.avatar}
             userId={authUser?.id}
             username={authUser?.username}
+            fullname={authUser?.fullname}
           />
         }
       />

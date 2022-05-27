@@ -51,6 +51,15 @@ body {
   }
 }
 
+@layer components {
+  .tooltip-base {
+    @apply absolute bottom-[-30px] left-[50%] translate-x-[-50%] z-[1] text-center w-full min-w-max text-xs transition-all tracking-wide bg-stone-600 text-white rounded py-[2px] px-[4px];
+  }
+  .tooltip[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    @apply tooltip-base;
+  }
+}
 select {
   -moz-appearance: none; /* Firefox */
   -webkit-appearance: none; /* Safari and Chrome */

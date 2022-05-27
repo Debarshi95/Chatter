@@ -25,15 +25,16 @@ const Search = () => {
   };
 
   return (
-    <div className="p-2 flex-1">
+    <div className="p-1 flex-1">
       {users?.map((user) => {
         const isFollowingUser = isFollowing(user, authUser.id);
         return (
-          <div className="border-stone-600 border rounded-lg p-4 my-2" key={user.id}>
+          <div className="border-slate-600 border rounded-lg p-2 my-2" key={user.id}>
             <CardHeader
               key={user.id}
               username={user.username}
               isFollowing={isFollowingUser}
+              fullname={user?.fullname}
               showFollowButton
               avatar={user.avatar}
               userId={user.id}

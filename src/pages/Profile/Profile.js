@@ -1,29 +1,33 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { Avatar, Button, CardHeader, EditProfileModal, PostBox, Text } from 'components';
+import { Avatar, Button, CardHeader, EditProfileModal, Loader, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
-import { selectAuthUser, selectUserProfile } from 'store/selectors';
+import { selectAuthUser, selectUserProfile, selectUserProfileState } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
 
 const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {
-    state: { id },
-  } = useLocation();
+  const { state } = useLocation();
 
   const dispatch = useDispatch();
 
-  const user = useSelector(selectUserProfile);
+  const { user, loading } = useSelector(selectUserProfileState);
   const authUser = useSelector(selectAuthUser);
 
-  const isFollowingUser = isFollowing(user, authUser.id);
+  const userProfile = user?.id === authUser?.id ? authUser : user;
+
+  console.log({ loading });
+  const isFollowingUser = isFollowing(user, authUser?.id);
 
   useEffect(() => {
-    dispatch(getProfileData(id));
-  }, [dispatch, id, user?.id]);
+    if (state?.id) {
+      dispatch(getProfileData(state.id));
+    }
+  }, [dispatch, state?.id, user?.id]);
 
   const handleFollowClick = () => {
     const userId = user.id;
@@ -46,6 +50,8 @@ const Profile = () => {
     dispatch(getProfileData(authUser.id));
   };
 
+  if (loading) return <Loader />;
+
   return (
     <div className="text-gray-300 p-2 flex-1 md:ml-4" id="modalContainer">
       <header className="flex flex-col md:flex-row justify-between rounded-md">
@@ -53,13 +59,12 @@ const Profile = () => {
           <Avatar url={user.avatar} alt={user.username} className="w-36 h-36" />
         </div>
         <div className="mt-2 text-center md:text-left flex-1 md:2/3 md:ml-4">
-          {user?.fullname ||
-            (user?.username && (
-              <div className="mb-2 md:mb-0 font-sans">
-                <Text className="font-semibold text-xl">{user.fullname || user.username}</Text>
-                <Text className="text-base text-gray-400 font-light">{`@${user.username}`}</Text>
-              </div>
-            ))}
+          {(user?.fullname || user?.username) && (
+            <div className="mb-2 md:mb-0 font-sans">
+              <Text className="font-semibold text-xl">{user.fullname || user.username}</Text>
+              <Text className="text-base text-gray-400 font-light">{`@${user.username}`}</Text>
+            </div>
+          )}
 
           <Text className="text-base my-2 text-center font-extralight md:text-left">
             {user?.bio || 'No Bio found'}
@@ -119,7 +124,7 @@ const Profile = () => {
         )}
       </section>
 
-      <EditProfileModal isOpen={isModalOpen} onClose={handleModalOpen} user={user} />
+      <EditProfileModal isOpen={isModalOpen} onClose={handleModalOpen} user={user} key={user.id} />
     </div>
   );
 };

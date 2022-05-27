@@ -18,5 +18,5 @@ export {
 } from './postSlice';
 
 export { default as searchReducer, getAllUsers, getTrendingPosts } from './searchSlice';
-export { default as profileReducer, getProfileData } from './profileSlice';
+export { default as profileReducer, getProfileData, setProfileState } from './profileSlice';
 export { default as commentReducer, createComment, getPostComments } from './commentSlice';
