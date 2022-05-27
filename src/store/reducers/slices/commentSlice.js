@@ -36,7 +36,7 @@ export const createComment = createAsyncThunk(
   'comments/createComment',
   async (postData, { rejectWithValue, dispatch }) => {
     const { image } = postData;
-    console.log({ postData });
+
     try {
       let url = '';
       if (image) {
@@ -45,7 +45,7 @@ export const createComment = createAsyncThunk(
           url = await getDownloadURL(imgRes.ref);
         }
       }
-      console.log(url);
+
       const res = await createPostComment({ ...postData, url });
       if (res?.id) {
         dispatch(getPostComments(postData.postId));

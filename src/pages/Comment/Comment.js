@@ -17,7 +17,7 @@ const Comment = () => {
 
   const authUser = useSelector(selectAuthUser);
   const { comments, post, loading } = useSelector(selectCommentState);
-  console.log({ post });
+
   useEffect(() => {
     if (postId) {
       dispatch(getPostById(postId));

@@ -13,7 +13,6 @@ const Home = () => {
   const authUser = useSelector(selectAuthUser);
 
   const { postFeed, isLoading } = useLazyLoad(posts, postRef);
-  console.log({ postFeed });
 
   useEffect(() => {
     if (authUser?.uid) {
