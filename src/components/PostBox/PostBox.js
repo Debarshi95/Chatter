@@ -30,7 +30,7 @@ const PostBox = ({
     if (contentRef.current.textContent === '') return;
 
     if (type === 'COMMENT') {
-      onComment({ image: postImage, content: contentRef.current.textContent });
+      onComment({ image: postImage, text: contentRef.current.textContent });
     } else {
       onCreatePost({ image: postImage, content: contentRef.current.textContent });
     }
@@ -71,8 +71,11 @@ const PostBox = ({
             className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
             data-placeholder={placeholder}
           />
-          {(postImage || post?.image) && (
-            <img alt="" src={(postImage && URL.createObjectURL(postImage)) || post?.image} />
+          {(postImage || post?.image || post?.url) && (
+            <img
+              alt=""
+              src={(postImage && URL.createObjectURL(postImage)) || post.image || post?.url}
+            />
           )}
         </article>
         {contentEditable && (

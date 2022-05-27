@@ -1,8 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getDownloadURL } from 'firebase/storage';
 import {
   getDocById,
   createComment as createPostComment,
   getAllComments,
+  uploadCommentImage,
+  getPostUser,
 } from 'services/firebaseApi';
 
 export const getPostComments = createAsyncThunk(
@@ -32,8 +35,18 @@ export const getPostComments = createAsyncThunk(
 export const createComment = createAsyncThunk(
   'comments/createComment',
   async (postData, { rejectWithValue, dispatch }) => {
+    const { image } = postData;
+    console.log({ postData });
     try {
-      const res = await createPostComment(postData);
+      let url = '';
+      if (image) {
+        const imgRes = await uploadCommentImage(image);
+        if (imgRes.ref.name) {
+          url = await getDownloadURL(imgRes.ref);
+        }
+      }
+      console.log(url);
+      const res = await createPostComment({ ...postData, url });
       if (res?.id) {
         dispatch(getPostComments(postData.postId));
       }
@@ -43,15 +56,51 @@ export const createComment = createAsyncThunk(
   }
 );
 
+export const getPostById = createAsyncThunk(
+  'comment/getPostById',
+  async (postId, { rejectWithValue }) => {
+    try {
+      const res = await getDocById(postId, 'posts');
+
+      if (res?.id) {
+        const post = { id: res.id, ...res.data() };
+        const postUser = await getPostUser(post.userId);
+        if (postUser?.docs?.length) {
+          post.user = { id: postUser.docs[0].id, ...postUser.docs[0].data() };
+        }
+        return post;
+      }
+      return {};
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 const initialState = {
   comments: [],
+  post: null,
   loading: false,
   error: '',
+  isUploading: false,
 };
+
 const commentSlice = createSlice({
   name: 'comments',
   initialState,
   extraReducers: {
+    [getPostById.pending]: (state) => {
+      state.loading = true;
+      state.error = '';
+    },
+    [getPostById.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.post = { ...action.payload };
+      state.error = '';
+    },
+    [getPostById.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message;
+    },
     [getPostComments.pending]: (state) => {
       state.loading = true;
       state.error = '';
@@ -62,6 +111,21 @@ const commentSlice = createSlice({
       state.error = '';
     },
     [getPostComments.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message;
+    },
+    [createComment.pending]: (state) => {
+      state.loading = true;
+      state.isUploading = true;
+      state.error = '';
+    },
+    [createComment.fulfilled]: (state) => {
+      state.isUploading = false;
+      state.loading = false;
+      state.error = '';
+    },
+    [createComment.rejected]: (state, action) => {
+      state.isUploading = false;
       state.loading = false;
       state.error = action.payload?.message;
     },

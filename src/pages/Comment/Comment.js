@@ -2,33 +2,41 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { selectAuthUser, selectPostById, selectPostComments } from 'store/selectors';
-import { CardHeader, PostBox, Text } from 'components';
-import { createComment, getPostComments } from 'store/reducers/slices';
+import {
+  selectAuthUser,
+  selectCommentState,
+  selectPostById,
+  selectPostComments,
+} from 'store/selectors';
+import { CardHeader, Loader, PostBox, Text } from 'components';
+import { createComment, getPostById, getPostComments } from 'store/reducers/slices';
 
 const Comment = () => {
   const dispatch = useDispatch();
   const { postId = '' } = useParams();
 
-  const post = useSelector(selectPostById(postId));
   const authUser = useSelector(selectAuthUser);
-  const comments = useSelector(selectPostComments);
-
+  const { comments, post, loading } = useSelector(selectCommentState);
+  console.log({ post });
   useEffect(() => {
-    if (!post?.comments) {
+    if (postId) {
+      dispatch(getPostById(postId));
       dispatch(getPostComments(postId));
     }
-  }, [dispatch, post, postId]);
+  }, [dispatch, postId]);
 
-  const handleCreateComment = async (value) => {
-    dispatch(createComment({ postId: post.id, userId: authUser.id, text: value }));
+  const handleCreateComment = async ({ image, text }) => {
+    dispatch(createComment({ postId: post.id, userId: authUser.id, text, image }));
   };
 
+  if (loading) return <Loader />;
+
   return (
-    <div className="p-4">
+    <div className="p-2 flex-1">
+      <Text className="text-gray-300 text-xl mb-2 text-center"> Comments</Text>
       {post && (
         <div>
-          <PostBox post={post} user={post.user} />
+          <PostBox post={post} user={post.user} showPostIcons={false} />
           <PostBox
             user={authUser}
             contentEditable
@@ -42,13 +50,13 @@ const Comment = () => {
                 avatar={authUser?.avatar}
                 userId={authUser?.id}
                 username={authUser?.username}
+                fullname={authUser?.fullname}
               />
             }
           />
         </div>
       )}
       <div>
-        <Text className="text-gray-300 text-xl mb-2"> Comments</Text>
         {comments.map((comment) => (
           <PostBox
             key={comment.id}
