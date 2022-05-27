@@ -27,18 +27,19 @@ const SuggestionSidebar = () => {
   };
 
   return (
-    <div className="w-72 bg-slate-700 h-fit my-2 rounded-md px-2 py-1 invisible md:visible">
+    <div className="w-72 min-h-20 sticky top-20 border-slate-700 border h-fit my-2 rounded-md px-2 py-1 hidden md:block">
+      <Text className="text-white font-bold text-center mt-2 mb-3 text-2xl">Suggestions</Text>
       {users?.slice(0, 4)?.map((user) => {
         const isFollowingUser = isFollowing(user, authUser?.id);
         return (
           <div
             key={user.id}
-            className="border-slate-600 border-2 p-2 my-1 flex items-center rounded-md"
+            className="bg-slate-800 border-slate-700 border p-2 my-1 flex items-center rounded-md"
           >
             <Avatar url={user.avatar} alt={user.username} className="h-12 w-12 mr-2" />
             <div className="text-gray-300">
               <Text className="text-base">{user.username}</Text>
-              <Text className="text-sm text-slate-400">
+              <Text className="text-sm text-slate-400 font-sans">
                 {user?.fullname || `@${user.username}`}
               </Text>
             </div>

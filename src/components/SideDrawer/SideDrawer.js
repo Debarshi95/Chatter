@@ -18,7 +18,7 @@ const SideDrawer = () => {
   const location = useLocation();
 
   return (
-    <aside className="border-slate-700 border w-64 h-90 sticky my-2 rounded-md top-20 px-2">
+    <aside className="hidden md:block border-slate-700 border w-64 h-90 sticky my-2 rounded-md top-20 px-2">
       {sidebarLinks.map((link) => {
         const pathname =
           link.path === '/profile/:username' ? `/profile/${authUser?.username}` : link.path;

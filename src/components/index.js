@@ -11,3 +11,6 @@ export { default as Avatar } from './Avatar/Avatar';
 export { default as PostBoxFooter } from './PostBoxFooter/PostBoxFooter';
 export { default as EditProfileModal } from './EditProfileModal/EditProfileModal';
 export { default as Select } from './Select/Select';
+export { default as Wrapper } from './Wrapper/Wrapper';
+export { default as SideDrawer } from './SideDrawer/SideDrawer';
+export { default as SuggestionSidebar } from './SuggestionSidebar/SuggestionSidebar';
