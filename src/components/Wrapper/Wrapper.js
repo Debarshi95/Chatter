@@ -1,7 +1,7 @@
 import { Navbar, SideDrawer, SuggestionSidebar } from 'components';
 import { Outlet, useLocation } from 'react-router-dom';
 
-const suggestionBarLink = ['/', '/search'];
+const suggestionBarLink = ['/', '/search', '/trending'];
 
 const Wrapper = () => {
   const { pathname } = useLocation();
