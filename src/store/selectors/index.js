@@ -7,4 +7,4 @@ export {
   selectTrendingPosts,
 } from './searchSelector';
 export { selectUserProfileState, selectUserProfile } from './profileSelector';
-export { selectPostComments } from './commentSelector';
+export { selectPostComments, selectCommentState } from './commentSelector';

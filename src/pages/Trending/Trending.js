@@ -45,7 +45,7 @@ const Search = () => {
         />
       </div>
       {posts?.map((post) => (
-        <PostBox post={post} key={post.id} />
+        <PostBox post={post} key={post.id} onUpdatePost={() => dispatch(getTrendingPosts())} />
       ))}
     </div>
   );

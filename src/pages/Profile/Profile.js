@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { Avatar, Button, CardHeader, EditProfileModal, Loader, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
-import { selectAuthUser, selectUserProfile, selectUserProfileState } from 'store/selectors';
+import { selectAuthUser, selectUserProfileState } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
 
 const Profile = () => {
