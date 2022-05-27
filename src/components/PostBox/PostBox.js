@@ -38,6 +38,7 @@ const PostBox = ({
           avatar={post?.user?.avatar}
           userId={post?.user?.id}
           username={post?.user?.username}
+          fullname={post?.user?.fullname}
         />
       )}
       <div className="flex flex-col px-4">

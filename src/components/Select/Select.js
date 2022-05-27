@@ -28,7 +28,7 @@ const Select = ({
       role="button"
       aria-hidden
       className={cn(
-        'flex cursor-pointer text-sm text-center bg-slate-700 w-32 ml-auto text-white rounded-md mb-4 items-center justify-between relative',
+        'flex cursor-pointer text-sm text-center border border-stone-600 bg-slate-700 w-32 ml-auto text-white rounded-md mb-4 items-center justify-between relative',
         className,
         { 'p-2': !defaultMenuOpen }
       )}

@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Text, Button, Avatar } from 'components';
-import { getFirstChar } from 'utils/helperFuncs';
 
 const CardHeader = ({
   fullname,
@@ -18,13 +17,7 @@ const CardHeader = ({
     <Link to={`/profile/${username}`} state={{ id: userId }}>
       <div className="cursor-pointer flex items-center text-gray-300 font-sans min-h-full">
         <div className="flex items-center justify-start">
-          {avatar ? (
-            <Avatar url={avatar} alt={username} className={avatarClassName} />
-          ) : (
-            <div className="w-20 h-20 bg-slate-700 flex items-center content-center rounded-full">
-              <Text className="text-2xl text-center flex-1">{getFirstChar(username)}</Text>
-            </div>
-          )}
+          <Avatar url={avatar} alt={username} className={avatarClassName} />
           <div className="text-lg py-2 ml-2">
             <Text>{fullname || username}</Text>
             {username && <Text className="text-sm font-normal">{`@${username}`}</Text>}
