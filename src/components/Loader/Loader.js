@@ -1,11 +1,14 @@
 import { HashLoader } from 'react-spinners';
 
-const Loader = () => {
+const Loader = ({ className }) => {
   return (
-    <div className="h-80 flex items-center justify-center flex-1">
+    <div className={className}>
       <HashLoader color="blue" />
     </div>
   );
 };
 
+Loader.defaultProps = {
+  className: 'h-80 flex items-center justify-center flex-1',
+};
 export default Loader;
