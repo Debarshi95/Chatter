@@ -18,7 +18,7 @@ const SideDrawer = () => {
   const location = useLocation();
 
   return (
-    <aside className="bg-slate-700 w-64 h-90 sticky my-2 rounded-md top-10 px-2">
+    <aside className="border-slate-700 border w-64 h-90 sticky my-2 rounded-md top-20 px-2">
       {sidebarLinks.map((link) => {
         const pathname =
           link.path === '/profile/:username' ? `/profile/${authUser?.username}` : link.path;
@@ -27,8 +27,8 @@ const SideDrawer = () => {
             to={pathname}
             key={link.name}
             className={cn(
-              'flex text-white p-3 px-4 items-center text-lg w-full rounded-md my-1 hover:bg-slate-800 hover:text-blue-500',
-              pathname === location.pathname ? 'bg-slate-800 text-blue-500' : ''
+              'flex text-white p-3 px-4 items-center text-lg w-full rounded-md my-1 hover:bg-slate-700 hover:text-blue-500',
+              pathname === location.pathname ? 'bg-slate-700 text-blue-500' : ''
             )}
             state={{ id: authUser?.id }}
           >
