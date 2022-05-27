@@ -18,9 +18,6 @@ const Profile = () => {
   const { user, loading } = useSelector(selectUserProfileState);
   const authUser = useSelector(selectAuthUser);
 
-  const userProfile = user?.id === authUser?.id ? authUser : user;
-
-  console.log({ loading });
   const isFollowingUser = isFollowing(user, authUser?.id);
 
   useEffect(() => {

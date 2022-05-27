@@ -41,7 +41,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
   };
 
   const handleUpdateProfile = async () => {
-    if (user.username === '' || user.bio === '') return;
+    if (userDetails.fullname === '' || userDetails.bio === '') return;
     dispatch(updateAuthUserProfile({ ...userDetails, userId: user.id }));
     dispatch(setProfileState(true));
     onClose(false);

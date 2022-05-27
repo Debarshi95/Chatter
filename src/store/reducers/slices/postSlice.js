@@ -40,10 +40,12 @@ export const createPost = createAsyncThunk(
   async (postData, { rejectWithValue, dispatch }) => {
     const { user, content, image } = postData;
     try {
-      let url;
-      const imgRes = await uploadPostImage(image);
-      if (imgRes.ref.name) {
-        url = await getDownloadURL(imgRes.ref);
+      let url = '';
+      if (image) {
+        const imgRes = await uploadPostImage(image);
+        if (imgRes.ref.name) {
+          url = await getDownloadURL(imgRes.ref);
+        }
       }
       const res = await createNewPost({
         userId: user.id,
