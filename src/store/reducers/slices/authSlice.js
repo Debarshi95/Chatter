@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getDownloadURL } from 'Firebase';
 import {
   signup as userSignup,
@@ -156,7 +155,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    [updateAuthUserProfile.pending]: (state, action) => {
+    [updateAuthUserProfile.pending]: (state) => {
       state.loading = true;
     },
     [updateAuthUserProfile.fulfilled]: (state, action) => {

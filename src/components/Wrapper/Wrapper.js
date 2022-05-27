@@ -1,4 +1,5 @@
 import { Navbar, SideDrawer, SuggestionSidebar } from 'components';
+import { withProtectedRoute } from 'hoc';
 import { Outlet, useLocation } from 'react-router-dom';
 
 const suggestionBarLink = ['/', '/search', '/trending'];
@@ -20,4 +21,4 @@ const Wrapper = () => {
   );
 };
 
-export default Wrapper;
+export default withProtectedRoute(Wrapper);

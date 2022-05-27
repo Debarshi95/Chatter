@@ -1,9 +1,8 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Loader, NotFound, Wrapper as IndexPage } from 'components';
 import { getAuthUserData } from 'store/reducers/slices';
-import { selectAuthUser } from 'store/selectors';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'Firebase';
 import { Toaster } from 'react-hot-toast';
@@ -18,10 +17,8 @@ const CommentPage = lazy(() => import('./Comment/Comment'));
 
 const App = () => {
   const dispatch = useDispatch();
-  const authUser = useSelector(selectAuthUser);
 
   useEffect(() => {
-    let unsub;
     const fetchUser = () => {
       return onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -29,16 +26,15 @@ const App = () => {
         }
       });
     };
-    if (!authUser) {
-      unsub = fetchUser();
-    }
+
+    const unsub = fetchUser();
 
     return () => {
       if (typeof unsub === 'function') {
         unsub();
       }
     };
-  }, [authUser, dispatch]);
+  }, [dispatch]);
 
   return (
     <div className="bg-gray-800 min-h-screen w-full font-poppins">
