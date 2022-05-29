@@ -3,7 +3,7 @@ import { HashLoader } from 'react-spinners';
 const Loader = ({ className }) => {
   return (
     <div className={className}>
-      <HashLoader color="blue" />
+      <HashLoader color="white" />
     </div>
   );
 };

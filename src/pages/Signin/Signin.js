@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthErrorCodes } from 'Firebase';
 import { withAuthRoute } from 'hoc';
@@ -8,6 +8,7 @@ import { Button, Text, Input } from 'components';
 import { validateLogin } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
 import { signin } from 'store/reducers/slices';
+import { selectAuthState } from 'store/selectors';
 
 const GUEST_EMAIL = process.env.REACT_APP_GUEST_EMAIL;
 const GUEST_PASSWORD = process.env.REACT_APP_GUEST_PASSWORD;
@@ -15,6 +16,8 @@ const GUEST_PASSWORD = process.env.REACT_APP_GUEST_PASSWORD;
 const Signin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { loading = false } = useSelector(selectAuthState);
 
   const handleSubmit = async (values, { resetForm }) => {
     let message;
@@ -63,6 +66,7 @@ const Signin = () => {
           touched,
           setValues,
         }) => {
+          const isLoading = isSubmitting || loading;
           return (
             <>
               <Text
@@ -105,16 +109,16 @@ const Signin = () => {
                   type="submit"
                   className="mt-4 p-2 text-gray-300 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold"
                   disabled={Boolean(
-                    isSubmitting || !touched || values.email === '' || values.password === ''
+                    isLoading || !touched || values.email === '' || values.password === ''
                   )}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Signin'}
+                  {isLoading ? 'Submitting...' : 'Signin'}
                 </Button>
                 <Button
                   component="button"
                   type="submit"
                   className="my-4 p-2 text-blue-500 font-semibold bg-transparent rounded-md border-2 border-blue-500"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                   onClick={() => {
                     setValues({
                       email: GUEST_EMAIL,
@@ -122,7 +126,7 @@ const Signin = () => {
                     });
                   }}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Signin with Guest account'}
+                  {isLoading ? 'Submitting...' : 'Signin with Guest account'}
                 </Button>
                 <Text className="text-gray-300 text-center">
                   Not registered?{' '}

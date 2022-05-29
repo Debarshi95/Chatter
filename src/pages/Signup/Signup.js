@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthErrorCodes } from 'firebase/auth';
 import { withAuthRoute } from 'hoc';
@@ -8,10 +8,13 @@ import { Button, Text, Input } from 'components';
 import { validateRegister } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
 import { signup } from 'store/reducers/slices';
+import { selectAuthState } from 'store/selectors';
 
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { loading = false } = useSelector(selectAuthState);
 
   const handleSubmit = async (values, { resetForm, setFieldError }) => {
     const { password, confirmPassword } = values;
@@ -58,6 +61,7 @@ const Signup = () => {
         onSubmit={handleSubmit}
       >
         {({ handleSubmit: handleFormikSubmit, isSubmitting, values, errors, isValid }) => {
+          const isLoading = isSubmitting || loading;
           return (
             <>
               <Text
@@ -116,7 +120,7 @@ const Signup = () => {
                   type="submit"
                   className="mt-4 p-2 text-gray-300 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold"
                   disabled={
-                    isSubmitting ||
+                    isLoading ||
                     !isValid ||
                     Boolean(
                       values.username === '' ||
@@ -126,7 +130,7 @@ const Signup = () => {
                     )
                   }
                 >
-                  {isSubmitting ? 'Submitting...' : 'Sign Up'}
+                  {isLoading ? 'Submitting...' : 'Sign Up'}
                 </Button>
                 <Text className="text-gray-300 text-center my-4">
                   Already registered?{' '}
