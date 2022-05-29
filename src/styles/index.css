@@ -17,11 +17,8 @@ body {
 .h-90 {
   height: 90vh;
 }
-.max-w-75 {
-  max-width: 75%;
-}
 
-@layer {
+@layer base {
   .slide-out {
     transform: translateX(-120%);
     transititon: transform 3s;
@@ -39,8 +36,30 @@ body {
   .max-w-full {
     max-width: 100%;
   }
+  .border-1 {
+    border-width: 1px;
+  }
+  .max-w-75 {
+    max-width: 75%;
+  }
+
+  .max-w-85 {
+    max-width: 85%;
+  }
+  .min-h-20 {
+    min-height: 20rem;
+  }
 }
 
+@layer components {
+  .tooltip-base {
+    @apply absolute bottom-[-30px] left-[50%] translate-x-[-50%] z-[1] text-center w-full min-w-max text-xs transition-all tracking-wide bg-stone-600 text-white rounded py-[2px] px-[4px];
+  }
+  .tooltip[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    @apply tooltip-base;
+  }
+}
 select {
   -moz-appearance: none; /* Firefox */
   -webkit-appearance: none; /* Safari and Chrome */

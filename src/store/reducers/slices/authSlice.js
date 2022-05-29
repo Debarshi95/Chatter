@@ -11,13 +11,15 @@ import {
   uploadAvatar,
   updateUserInfo as updateProfileInfo,
 } from 'services/firebaseApi';
+import { getProfileData } from './profileSlice';
 
 export const signin = createAsyncThunk('auth/signin', async (inputData, { rejectWithValue }) => {
   try {
     await userSignin(inputData);
   } catch (error) {
-    rejectWithValue({ message: error?.message, code: error?.code });
+    return rejectWithValue({ message: error?.message, code: error?.code });
   }
+  return null;
 });
 
 export const getAuthUserData = createAsyncThunk(
@@ -57,22 +59,23 @@ export const signup = createAsyncThunk('auth/signup', async (inputData, { reject
 
 export const updateAuthUserProfile = createAsyncThunk(
   'profile/updateAuthUserProfile',
-  async (userData, { rejectWithValue }) => {
-    const { avatar: file, username, bio, userId } = userData;
+  async (userData, { rejectWithValue, dispatch }) => {
+    const { avatar, username, bio, userId, fullname = '' } = userData;
 
     try {
       let url;
-      if (typeof file === 'object') {
-        const res = await uploadAvatar(file);
+      if (typeof avatar === 'object') {
+        const res = await uploadAvatar(avatar);
         if (res.ref.name) {
           url = await getDownloadURL(res.ref);
-          await updateProfileInfo({ userId, username, bio, avatar: url || '' });
+          await updateProfileInfo({ userId, username, bio, fullname, avatar: url || '' });
         }
       } else {
-        await updateProfileInfo({ userId, username, bio, avatar: file });
+        url = avatar;
+        await updateProfileInfo({ userId, username, bio, avatar, fullname });
       }
-
-      return { ...userData, avatar: file || url };
+      dispatch(getProfileData(userId));
+      return { ...userData, avatar: url };
     } catch (error) {
       rejectWithValue(error);
     }
@@ -119,10 +122,16 @@ const authSlice = createSlice({
     },
   },
   extraReducers: {
+    [signin.pending]: (state) => {
+      state.loading = true;
+    },
     [signin.rejected]: (state, action) => {
       state.user = null;
       state.loading = false;
       state.error = action.payload;
+    },
+    [signup.pending]: (state) => {
+      state.loading = true;
     },
     [signup.rejected]: (state, action) => {
       state.user = null;
@@ -151,6 +160,14 @@ const authSlice = createSlice({
       state.user = null;
       state.loading = false;
       state.error = action.payload;
+    },
+    [updateAuthUserProfile.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateAuthUserProfile.fulfilled]: (state, action) => {
+      const { payload } = action;
+      const { user } = state;
+      state.user = { ...user, ...payload };
     },
   },
 });

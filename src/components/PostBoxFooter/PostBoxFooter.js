@@ -1,14 +1,16 @@
 import cn from 'clsx';
 import { cloneElement } from 'react';
-import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from 'react-icons/ai';
+import { AiOutlineRetweet } from 'react-icons/ai';
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
+import { MdThumbUp, MdOutlineThumbUpOffAlt, MdOutlineComment } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { updatePost } from 'store/reducers/slices';
 import { selectAuthUser } from 'store/selectors';
 
 const footerItems = [
+  { name: 'likes', outlined: <MdOutlineThumbUpOffAlt />, contained: <MdThumbUp /> },
   { name: 'retweets', outlined: <AiOutlineRetweet />, contained: <AiOutlineRetweet /> },
-  { name: 'likes', outlined: <AiOutlineHeart />, contained: <AiFillHeart /> },
   { name: 'bookmarks', outlined: <BsBookmark />, contained: <BsBookmarkFill /> },
 ];
 
@@ -43,14 +45,14 @@ const PostBoxFooter = ({ post, onUpdate }) => {
   };
 
   return (
-    <div className="flex justify-between w-2/3 ml-auto">
+    <div className="flex justify-start items-center w-full">
       {footerItems.map((item) => {
         const itemLength = post?.[item.name]?.length;
         const postClicked = post?.[item.name]?.includes(user.id);
         const icon = postClicked ? item.contained : item.outlined;
         return (
           <div
-            className="text-inherit flex items-center"
+            className="text-inherit flex items-center mr-4 font-thin"
             onClick={() => {
               const type = postClicked ? 'DELETE' : 'UPDATE';
               handleOnButtonClick(item.name, type);
@@ -60,15 +62,18 @@ const PostBoxFooter = ({ post, onUpdate }) => {
             key={item.name}
           >
             {cloneElement(icon, {
-              className: cn({
-                'text-slate-500': postClicked,
-                'text-xl': item.name === 'bookmarks',
+              className: cn('block text-xl font-thin', {
+                'text-sm': item.name === 'bookmarks',
               }),
             })}
             <p className="text-base ml-2">{itemLength}</p>
           </div>
         );
       })}
+      <Link to={`/comment/${post?.id}`} className="flex items-center mr-4 font-thin">
+        <MdOutlineComment className={cn('block text-xl font-thin hover:text-slate-600 ')} />
+        <p className="text-base ml-2">{post?.comments?.length}</p>
+      </Link>
     </div>
   );
 };

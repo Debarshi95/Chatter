@@ -1,26 +1,24 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Loader, Navbar, NotFound } from 'components';
-import { auth, onAuthStateChanged } from 'Firebase';
+import { Loader, NotFound, Wrapper as IndexPage } from 'components';
 import { getAuthUserData } from 'store/reducers/slices';
-import { selectAuthUser } from 'store/selectors';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from 'Firebase';
+import { Toaster } from 'react-hot-toast';
 
 const HomePage = lazy(() => import('./Home/Home'));
 const SignupPage = lazy(() => import('./Signup/Signup'));
 const SigninPage = lazy(() => import('./Signin/Signin'));
 const SearchPage = lazy(() => import('./Search/Search'));
 const ProfilePage = lazy(() => import('./Profile/Profile'));
-const IndexPage = lazy(() => import('components/Wrapper/Wrapper'));
 const TrendingPage = lazy(() => import('./Trending/Trending'));
 const CommentPage = lazy(() => import('./Comment/Comment'));
 
 const App = () => {
   const dispatch = useDispatch();
-  const authUser = useSelector(selectAuthUser);
 
   useEffect(() => {
-    let unsub;
     const fetchUser = () => {
       return onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -28,30 +26,21 @@ const App = () => {
         }
       });
     };
-    if (!authUser) {
-      unsub = fetchUser();
-    }
+
+    const unsub = fetchUser();
 
     return () => {
       if (typeof unsub === 'function') {
         unsub();
       }
     };
-  }, [authUser, dispatch]);
+  }, [dispatch]);
 
   return (
     <div className="bg-gray-800 min-h-screen w-full font-poppins">
       <BrowserRouter>
-        <Navbar />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Suspense fallback={<Loader />}>
-                <IndexPage />
-              </Suspense>
-            }
-          >
+          <Route path="/" element={<IndexPage />}>
             <Route
               path="/"
               index
@@ -88,7 +77,7 @@ const App = () => {
               }
             />
             <Route
-              path="/comment/:postId"
+              path="comment/:postId"
               index
               element={
                 <Suspense fallback={<Loader />}>
@@ -120,6 +109,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </div>
   );
 };

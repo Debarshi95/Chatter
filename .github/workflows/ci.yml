@@ -40,6 +40,8 @@ jobs:
           REACT_APP_STORAGE_BUCKET: ${{ secrets.REACT_APP_STORAGE_BUCKET }}
           REACT_APP_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_MESSAGING_SENDER_ID }}
           REACT_APP_APP_ID: ${{ secrets.REACT_APP_APP_ID }}
+          REACT_APP_GUEST_EMAIL: ${{ secrets.REACT_APP_GUEST_EMAIL }}
+          REACT_APP_GUEST_PASSWORD: ${{ secrets.REACT_APP_GUEST_PASSWORD }}
         run: yarn build
 
       - name: Deploy to Netlify

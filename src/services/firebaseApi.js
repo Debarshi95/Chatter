@@ -54,10 +54,11 @@ export const createUser = ({
     bookmarks: [],
     updatedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
+    fullname: '',
   });
 };
 
-export const createPost = ({ userId, content = '', username }) => {
+export const createPost = ({ userId, image, content = '', username }) => {
   return addDoc(collection(firestore, 'posts'), {
     likes: [],
     retweets: [],
@@ -66,6 +67,7 @@ export const createPost = ({ userId, content = '', username }) => {
     content,
     userId,
     username,
+    image,
     createdAt: serverTimestamp(),
   });
 };
@@ -111,18 +113,29 @@ export const getAllUsers = (collectionName = 'users') => {
   return getDocs(queryRef);
 };
 
-export const createComment = ({ postId, userId, text, likes = [] }) => {
+export const createComment = ({ postId, userId, text, likes = [], url }) => {
   return addDoc(collection(firestore, 'comments'), {
     text,
     userId,
     postId,
     likes,
+    url,
     createdAt: serverTimestamp(),
   });
 };
 
 export const uploadAvatar = async (file) => {
   const storageRef = ref(storage, `/avatars/${file.name}`);
+  return uploadBytes(storageRef, file);
+};
+
+export const uploadPostImage = async (file) => {
+  const storageRef = ref(storage, `/posts/${file.name}`);
+  return uploadBytes(storageRef, file);
+};
+
+export const uploadCommentImage = async (file) => {
+  const storageRef = ref(storage, `/comment/${file.name}`);
   return uploadBytes(storageRef, file);
 };
 
@@ -142,6 +155,11 @@ export const getAllComments = async (postId) => {
     where('postId', '==', postId),
     orderBy('createdAt', 'desc')
   );
+  return getDocs(queryRef);
+};
+
+export const getPostUser = async (userId) => {
+  const queryRef = query(collection(firestore, 'posts'), where('userId', '==', userId));
   return getDocs(queryRef);
 };
 export const signout = async () => signOut(auth);

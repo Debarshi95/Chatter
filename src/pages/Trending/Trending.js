@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PostBox, Select } from 'components';
+import { PostBox, Select, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectTrendingPosts } from 'store/selectors';
@@ -32,15 +32,20 @@ const Search = () => {
   };
 
   return (
-    <div className="bg-green w-full p-4">
-      <Select
-        options={selectOptions}
-        defaultValue="Filters"
-        dropdownClassName="top-10"
-        onSelect={handleSelectClick}
-      />
+    <div className="flex-1 p-2">
+      <div className="flex justify-between items-start">
+        <Text className="text-gray-300 font-medium text-xl text-center flex-1 mt-2">
+          Trending Posts
+        </Text>
+        <Select
+          options={selectOptions}
+          defaultValue="Filters"
+          dropdownClassName="top-10"
+          onSelect={handleSelectClick}
+        />
+      </div>
       {posts?.map((post) => (
-        <PostBox post={post} key={post.id} />
+        <PostBox post={post} key={post.id} onUpdatePost={() => dispatch(getTrendingPosts())} />
       ))}
     </div>
   );

@@ -50,11 +50,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full bg-slate-700 p-2 sticky top-0 z-20 ">
+    <div className="w-full border-zinc-600 bg-gray-800 border-b p-2 sticky top-0 z-20">
       <nav className="flex w-full md:w-11/12 mx-auto text-gray-200 items-center">
         <Link
           to={user ? '/' : 'signin'}
-          className="inline-block font-medium p-2 text-2xl md:text-3xl cursor-pointer"
+          className="inline-block text-blue-500 font-medium p-2 text-2xl md:text-3xl cursor-pointer"
         >
           Chatter
         </Link>

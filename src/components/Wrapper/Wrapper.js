@@ -1,11 +1,24 @@
-import { Outlet } from 'react-router-dom';
+import { Navbar, SideDrawer, SuggestionSidebar } from 'components';
+import { withProtectedRoute } from 'hoc';
+import { Outlet, useLocation } from 'react-router-dom';
+
+const suggestionBarLink = ['/', '/search', '/trending'];
 
 const Wrapper = () => {
+  const { pathname } = useLocation();
+  const showSuggestionBar = suggestionBarLink.includes(pathname);
+
   return (
-    <main className="w-full mx-auto md:w-1/2">
-      <Outlet />
+    <main>
+      <Navbar />
+
+      <div className="flex w-full md:max-w-85 mx-auto">
+        <SideDrawer />
+        <Outlet />
+        {showSuggestionBar && <SuggestionSidebar />}
+      </div>
     </main>
   );
 };
 
-export default Wrapper;
+export default withProtectedRoute(Wrapper);
