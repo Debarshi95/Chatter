@@ -5,6 +5,7 @@ import { CardHeader, Loader, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { selectPosts, selectAuthUser } from 'store/selectors';
 import { createPost, getAllPosts } from 'store/reducers/slices';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Home = () => {
   const postRef = useRef();
@@ -13,6 +14,8 @@ const Home = () => {
   const authUser = useSelector(selectAuthUser);
 
   const { postFeed, isLoading } = useLazyLoad(posts, postRef);
+
+  useDocumentTitle('Feed | Chatter');
 
   useEffect(() => {
     if (authUser?.uid) {

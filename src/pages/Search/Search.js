@@ -5,11 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsers, updateAuthUserData } from 'store/reducers/slices';
 import { selectAuthUser, selectUsers } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Search = () => {
   const dispatch = useDispatch();
   const authUser = useSelector(selectAuthUser);
   const users = useSelector(selectUsers(authUser.uid));
+
+  useDocumentTitle('Search | Chatter');
 
   useEffect(() => {
     dispatch(getAllUsers());

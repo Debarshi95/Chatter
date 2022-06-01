@@ -9,12 +9,15 @@ import { validateRegister } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
 import { signup } from 'store/reducers/slices';
 import { selectAuthState } from 'store/selectors';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { loading = false } = useSelector(selectAuthState);
+
+  useDocumentTitle('Signup | Chatter');
 
   const handleSubmit = async (values, { resetForm, setFieldError }) => {
     const { password, confirmPassword } = values;

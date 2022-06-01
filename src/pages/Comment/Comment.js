@@ -1,15 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import {
-  selectAuthUser,
-  selectCommentState,
-  selectPostById,
-  selectPostComments,
-} from 'store/selectors';
+import { selectAuthUser, selectCommentState } from 'store/selectors';
 import { CardHeader, Loader, PostBox, Text } from 'components';
 import { createComment, getPostById, getPostComments } from 'store/reducers/slices';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Comment = () => {
   const dispatch = useDispatch();
@@ -17,6 +12,8 @@ const Comment = () => {
 
   const authUser = useSelector(selectAuthUser);
   const { comments, post, loading } = useSelector(selectCommentState);
+
+  useDocumentTitle('Comment | Chatter');
 
   useEffect(() => {
     if (postId) {

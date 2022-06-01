@@ -6,6 +6,7 @@ import { withProtectedRoute } from 'hoc';
 import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
 import { selectAuthUser, selectUserProfileState } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,6 +19,8 @@ const Profile = () => {
   const authUser = useSelector(selectAuthUser);
 
   const isFollowingUser = isFollowing(user, authUser?.id);
+
+  useDocumentTitle(`Profile | ${user?.username}`);
 
   useEffect(() => {
     if (state?.id) {

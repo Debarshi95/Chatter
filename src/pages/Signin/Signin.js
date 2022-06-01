@@ -9,6 +9,7 @@ import { validateLogin } from 'utils/formValidations';
 import { authErrorMessage } from 'constants/authMessage';
 import { signin } from 'store/reducers/slices';
 import { selectAuthState } from 'store/selectors';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const GUEST_EMAIL = process.env.REACT_APP_GUEST_EMAIL;
 const GUEST_PASSWORD = process.env.REACT_APP_GUEST_PASSWORD;
@@ -16,6 +17,8 @@ const GUEST_PASSWORD = process.env.REACT_APP_GUEST_PASSWORD;
 const Signin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useDocumentTitle('Search | Chatter');
 
   const { loading = false } = useSelector(selectAuthState);
 

@@ -4,6 +4,7 @@ import { withProtectedRoute } from 'hoc';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectTrendingPosts } from 'store/selectors';
 import { getTrendingPosts } from 'store/reducers/slices';
+import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const selectOptions = [
   { label: 'Likes', value: 'likes' },
@@ -16,6 +17,8 @@ const Search = () => {
   const [selectedFilter, setSelectedFilter] = useState('');
   const dispatch = useDispatch();
   const posts = useSelector(selectTrendingPosts(selectedFilter));
+
+  useDocumentTitle('Trending | Chatter');
 
   useEffect(() => {
     if (!posts?.length) {
