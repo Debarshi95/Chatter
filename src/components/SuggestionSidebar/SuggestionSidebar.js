@@ -46,7 +46,8 @@ const SuggestionSidebar = () => {
             <div
               role="button"
               aria-hidden
-              className="text-3xl ml-auto text-slate-400"
+              data-tooltip={isFollowingUser ? 'Unfollow' : 'Follow'}
+              className="tooltip relative text-3xl ml-auto text-slate-400"
               onClick={() => handleOnFollowClick(user.id, isFollowingUser)}
             >
               {isFollowingUser ? <BiCheckSquare /> : <AiOutlinePlusSquare />}

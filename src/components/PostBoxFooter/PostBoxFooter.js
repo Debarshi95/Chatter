@@ -52,7 +52,7 @@ const PostBoxFooter = ({ post, onUpdate }) => {
         const icon = postClicked ? item.contained : item.outlined;
         return (
           <div
-            className="text-inherit flex items-center mr-4 font-thin"
+            className="relative tooltip text-inherit flex items-center mr-4 font-thin"
             onClick={() => {
               const type = postClicked ? 'DELETE' : 'UPDATE';
               handleOnButtonClick(item.name, type);
@@ -60,9 +60,10 @@ const PostBoxFooter = ({ post, onUpdate }) => {
             role="button"
             aria-hidden
             key={item.name}
+            data-tooltip={item.name}
           >
             {cloneElement(icon, {
-              className: cn('block text-xl font-thin', {
+              className: cn('block text-xl font-thin hover:text-slate-600', {
                 'text-sm': item.name === 'bookmarks',
               }),
             })}
@@ -70,7 +71,11 @@ const PostBoxFooter = ({ post, onUpdate }) => {
           </div>
         );
       })}
-      <Link to={`/comment/${post?.id}`} className="flex items-center mr-4 font-thin">
+      <Link
+        to={`/comment/${post?.id}`}
+        className="relative tooltip flex items-center mr-4 font-thin"
+        data-tooltip="Comments"
+      >
         <MdOutlineComment className={cn('block text-xl font-thin hover:text-slate-600 ')} />
         <p className="text-base ml-2">{post?.comments?.length}</p>
       </Link>
