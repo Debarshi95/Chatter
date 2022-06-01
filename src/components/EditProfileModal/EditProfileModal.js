@@ -1,5 +1,6 @@
 import ReactModal from 'react-modal';
 import { useState } from 'react';
+import { MdOutlineCloudUpload } from 'react-icons/md';
 import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
 import { updateAuthUserProfile, setProfileState } from 'store/reducers/slices';
@@ -68,7 +69,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
       }}
     >
       <div className="p-2 text-white font-light">
-        <div className="flex items-center">
+        <div className="flex items-center relative">
           <Text className="mr-20">Avatar :</Text>
           <input
             id="avatar"
@@ -77,7 +78,8 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
             className="bg-transparent hidden"
             onChange={handleUploadImage}
           />
-          <label htmlFor="avatar">
+          <label htmlFor="avatar" className="relative tooltip" data-tooltip="Change Avatar">
+            <MdOutlineCloudUpload className="absolute text-gray-200 top-[65%] right-[4px] text-3xl" />
             <Avatar
               className="mx-auto w-28 h-28 mb-2 cursor-pointer"
               url={
@@ -101,6 +103,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
               placeholder="Fullname"
               className="w-full border-blue-500 bg-slate-700 border p-2 rounded-md my-2"
               value={userDetails.fullname}
+              accept="image/*"
               name="fullname"
               onChange={handleInputChange}
             />
