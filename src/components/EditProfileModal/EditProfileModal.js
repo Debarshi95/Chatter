@@ -31,6 +31,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
       ...userDetails,
       avatar: file,
     });
+    setError('');
     return null;
   };
 
@@ -77,6 +78,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
             title="Change your avatar"
             className="bg-transparent hidden"
             onChange={handleUploadImage}
+            accept="image/*"
           />
           <label htmlFor="avatar" className="relative tooltip" data-tooltip="Change Avatar">
             <MdOutlineCloudUpload className="absolute text-gray-200 top-[65%] right-[4px] text-3xl" />
