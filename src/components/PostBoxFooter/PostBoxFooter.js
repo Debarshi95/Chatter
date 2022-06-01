@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updatePost } from 'store/reducers/slices';
 import { selectAuthUser } from 'store/selectors';
+import { removeTrailingChar, toCapitalize } from 'utils/helperFuncs';
 
 const footerItems = [
   { name: 'likes', outlined: <MdOutlineThumbUpOffAlt />, contained: <MdThumbUp /> },
@@ -60,7 +61,7 @@ const PostBoxFooter = ({ post, onUpdate }) => {
             role="button"
             aria-hidden
             key={item.name}
-            data-tooltip={item.name}
+            data-tooltip={toCapitalize(removeTrailingChar(item.name, 's'))}
           >
             {cloneElement(icon, {
               className: cn('block text-xl font-thin hover:text-slate-600', {
