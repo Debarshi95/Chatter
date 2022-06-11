@@ -1,3 +1,4 @@
+import sanitizeHtml from 'sanitize-html';
 import { useEffect, useState } from 'react';
 import { PostBox, Select, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
@@ -48,7 +49,23 @@ const Search = () => {
         />
       </div>
       {posts?.map((post) => (
-        <PostBox post={post} key={post.id} onUpdatePost={() => dispatch(getTrendingPosts())} />
+        <PostBox key={post.id}>
+          <PostBox.Header
+            avatarClassName="w-20 h-20"
+            avatar={post?.user?.avatar}
+            userId={post?.user?.userId}
+            username={post?.user?.username}
+          />
+          <PostBox.Content>
+            <div
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content) }}
+              contentEditable
+              className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
+            />
+            {post?.image && <img alt="" src={post.image} />}
+          </PostBox.Content>
+          <PostBox.Footer post={post} onUpdate={() => dispatch(getTrendingPosts())} />
+        </PostBox>
       ))}
     </div>
   );

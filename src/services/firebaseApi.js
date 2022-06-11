@@ -159,7 +159,7 @@ export const getAllComments = async (postId) => {
 };
 
 export const getPostUser = async (userId) => {
-  const queryRef = query(collection(firestore, 'posts'), where('userId', '==', userId));
+  const queryRef = query(collection(firestore, 'users'), where('userId', '==', userId));
   return getDocs(queryRef);
 };
 export const signout = async () => signOut(auth);

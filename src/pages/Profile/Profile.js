@@ -1,7 +1,8 @@
+import sanitizeHtml from 'sanitize-html';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { Avatar, Button, CardHeader, EditProfileModal, Loader, PostBox, Text } from 'components';
+import { Avatar, Button, EditProfileModal, Loader, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
 import { selectAuthUser, selectUserProfileState } from 'store/selectors';
@@ -44,7 +45,7 @@ const Profile = () => {
     setIsModalOpen(value);
   };
 
-  const handleOnDeletePost = (postId) => {
+  const dispatchDeletePost = (postId) => {
     dispatch(deletePost({ postId, userId: authUser.id }));
     dispatch(getProfileData(authUser.id));
   };
@@ -100,26 +101,32 @@ const Profile = () => {
           <>
             <Text className="text-xl sm:text-xl font-medium my-4">Latest Posts</Text>
             {user?.posts?.map((post) => (
-              <PostBox
-                key={post.id}
-                post={post}
-                canDeletePost={user?.id === authUser.id}
-                onDeletePost={handleOnDeletePost}
-                user={user}
-                onUpdatePost={() => dispatch(getProfileData(user.id))}
-                headerComponent={
-                  <CardHeader
-                    avatarClassName="w-20 h-20"
-                    avatar={user?.avatar}
-                    userId={user?.userId}
-                    username={user?.username}
+              <PostBox key={post.id}>
+                <PostBox.Header
+                  avatarClassName="w-20 h-20"
+                  avatar={user?.avatar}
+                  userId={user?.userId}
+                  username={user?.username}
+                />
+                <PostBox.Content>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content) }}
+                    contentEditable
+                    className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
                   />
-                }
-              />
+                  {post?.image && <img alt="" src={post.image} />}
+                </PostBox.Content>
+                <PostBox.Footer
+                  deleteOption
+                  post={post}
+                  onUpdate={() => dispatch(getProfileData(user.id))}
+                  onDelete={dispatchDeletePost}
+                />
+              </PostBox>
             ))}
           </>
         ) : (
-          <Text className="text-2xl font-medium mb-4 text-center mt-16">User has no post</Text>
+          <Text className="text-xl font-medium mb-4 text-center mt-16">User has no post</Text>
         )}
       </section>
 
