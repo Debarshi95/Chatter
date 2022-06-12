@@ -6,17 +6,17 @@ import { Loader } from 'components';
 const withProtectedRoute = (Component) => {
   return (props) => {
     const { state } = useLocation();
-    const { user } = useSelector(selectAuthState);
+    const { user, loading } = useSelector(selectAuthState);
     const token = localStorage.getItem('token');
 
     const pathname = state?.from?.pathname || '/signin';
 
-    if (token && !user) return <Loader />;
+    if (loading === 'pending' || (token && !user)) return <Loader />;
 
-    if (!token && !user) {
+    if (!user) {
       return <Navigate to={pathname} />;
     }
-    return <Component {...props} />;
+    return <Component {...props} user={user} />;
   };
 };
 

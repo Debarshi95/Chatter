@@ -5,7 +5,6 @@ export {
   setUser,
   signout,
   getAuthUserData,
-  updateAuthUserProfile,
   updateAuthUserData,
 } from './authSlice';
 
@@ -18,7 +17,12 @@ export {
 } from './postSlice';
 
 export { default as searchReducer, getAllUsers, getTrendingPosts } from './searchSlice';
-export { default as profileReducer, getProfileData, setProfileState } from './profileSlice';
+export {
+  default as profileReducer,
+  getProfileData,
+  setProfileState,
+  updateProfile,
+} from './profileSlice';
 export {
   default as commentReducer,
   createComment,
