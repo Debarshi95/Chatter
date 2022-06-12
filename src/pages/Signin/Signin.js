@@ -20,7 +20,7 @@ const Signin = () => {
 
   useDocumentTitle('Search | Chatter');
 
-  const { loading = false } = useSelector(selectAuthState);
+  const { loading } = useSelector(selectAuthState);
 
   const handleSubmit = async (values, { resetForm }) => {
     let message;
@@ -69,7 +69,7 @@ const Signin = () => {
           touched,
           setValues,
         }) => {
-          const isLoading = isSubmitting || loading;
+          const isLoading = isSubmitting || loading === 'pending';
           return (
             <>
               <Text

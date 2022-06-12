@@ -15,7 +15,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading = false } = useSelector(selectAuthState);
+  const { loading } = useSelector(selectAuthState);
 
   useDocumentTitle('Signup | Chatter');
 
@@ -64,7 +64,7 @@ const Signup = () => {
         onSubmit={handleSubmit}
       >
         {({ handleSubmit: handleFormikSubmit, isSubmitting, values, errors, isValid }) => {
-          const isLoading = isSubmitting || loading;
+          const isLoading = isSubmitting || loading === 'pending';
           return (
             <>
               <Text
