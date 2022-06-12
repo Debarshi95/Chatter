@@ -78,7 +78,6 @@ const Comment = ({ user: authUser }) => {
               <PostBox.Content>
                 <div
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(comment?.text) }}
-                  contentEditable
                   className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
                 />
                 {comment?.url && <img alt="" src={comment.url} />}

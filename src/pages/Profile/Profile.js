@@ -110,7 +110,6 @@ const Profile = ({ user: authUser }) => {
                 <PostBox.Content>
                   <div
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content) }}
-                    contentEditable
                     className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
                   />
                   {post?.image && <img alt="" src={post.image} />}
