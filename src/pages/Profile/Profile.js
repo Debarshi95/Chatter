@@ -115,7 +115,7 @@ const Profile = ({ user: authUser }) => {
                   {post?.image && <img alt="" src={post.image} />}
                 </PostBox.Content>
                 <PostBox.Footer
-                  deleteOption
+                  deleteOption={authUser.id === user.id}
                   post={post}
                   onUpdate={() => dispatch(getProfileData(user.id))}
                   onDelete={dispatchDeletePost}
