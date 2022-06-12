@@ -5,11 +5,11 @@ import { useLocation } from 'react-router-dom';
 import { Avatar, Button, EditProfileModal, Loader, PostBox, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
 import { getProfileData, updateAuthUserData, deletePost } from 'store/reducers/slices';
-import { selectAuthUser, selectUserProfileState } from 'store/selectors';
+import { selectUserProfileState } from 'store/selectors';
 import { isFollowing } from 'utils/helperFuncs';
 import useDocumentTitle from 'hooks/useDocumentTitle';
 
-const Profile = () => {
+const Profile = ({ user: authUser }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { state } = useLocation();
@@ -17,7 +17,6 @@ const Profile = () => {
   const dispatch = useDispatch();
 
   const { user, loading } = useSelector(selectUserProfileState);
-  const authUser = useSelector(selectAuthUser);
 
   const isFollowingUser = isFollowing(user, authUser?.id);
 
@@ -27,7 +26,7 @@ const Profile = () => {
     if (state?.id) {
       dispatch(getProfileData(state.id));
     }
-  }, [dispatch, state?.id, user?.id]);
+  }, [dispatch, state.id]);
 
   const handleFollowClick = () => {
     const userId = user.id;
@@ -50,7 +49,7 @@ const Profile = () => {
     dispatch(getProfileData(authUser.id));
   };
 
-  if (loading) return <Loader />;
+  if (loading === 'pending') return <Loader />;
 
   return (
     <div className="text-gray-300 p-2 flex-1 md:ml-4" id="modalContainer">

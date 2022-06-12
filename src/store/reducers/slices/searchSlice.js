@@ -47,7 +47,7 @@ export const getTrendingPosts = createAsyncThunk(
 const initialState = {
   users: [],
   posts: [],
-  loading: false,
+  loading: 'idle',
   error: '',
 };
 const searchSlice = createSlice({
@@ -55,29 +55,41 @@ const searchSlice = createSlice({
   initialState,
   extraReducers: {
     [getAllUsers.pending]: (state) => {
-      state.loading = true;
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+      }
       state.error = '';
     },
     [getAllUsers.fulfilled]: (state, action) => {
-      state.loading = false;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+      }
       state.users = [...action.payload];
       state.error = '';
     },
     [getAllUsers.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload?.message;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = action.payload?.message;
+      }
     },
     [getTrendingPosts.pending]: (state) => {
-      state.loading = true;
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+      }
       state.error = '';
     },
     [getTrendingPosts.fulfilled]: (state, action) => {
-      state.loading = false;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+      }
       state.posts = [...action.payload];
       state.error = '';
     },
     [getTrendingPosts.rejected]: (state, action) => {
-      state.loading = false;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+      }
       state.error = action.payload?.message;
     },
   },

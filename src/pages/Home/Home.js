@@ -1,18 +1,18 @@
 import sanitizeHtml from 'sanitize-html';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Loader, PostBox, Text } from 'components';
+import { Loader, PostBox, ProgressBar, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
-import { selectPosts, selectAuthUser } from 'store/selectors';
+import { selectPostState } from 'store/selectors';
 import { createPost, getAllPosts } from 'store/reducers/slices';
 import useDocumentTitle from 'hooks/useDocumentTitle';
 import useLazyLoad from 'hooks/useLazyLoad';
 
-const Home = () => {
+const Home = ({ user: authUser }) => {
   const postRef = useRef();
   const dispatch = useDispatch();
-  const posts = useSelector(selectPosts);
-  const authUser = useSelector(selectAuthUser);
+
+  const { posts = [], isUploading } = useSelector(selectPostState);
 
   const { postFeed, isLoading } = useLazyLoad(posts, postRef);
 
@@ -20,7 +20,7 @@ const Home = () => {
 
   useEffect(() => {
     if (authUser?.uid) {
-      dispatch(getAllPosts({ userId: authUser.uid, following: authUser.following }));
+      dispatch(getAllPosts({ userId: authUser.uid, following: authUser.following?.slice(0, 8) }));
     }
   }, [authUser.uid, dispatch, authUser.following]);
 
@@ -44,6 +44,7 @@ const Home = () => {
           placeholder="Write something interesting..."
         />
       </PostBox>
+      {isUploading === 'pending' && <ProgressBar />}
       <section>
         {postFeed?.map((post) => (
           <div key={post.id} ref={postRef}>

@@ -56,7 +56,7 @@ export const createComment = createAsyncThunk(
 );
 
 export const getPostById = createAsyncThunk(
-  'comment/getPostById',
+  'comments/getPostById',
   async (postId, { rejectWithValue }) => {
     try {
       const res = await getDocById(postId, 'posts');

@@ -55,8 +55,9 @@ const Editable = ({ type, onComment, onCreate, placeholder }) => {
         <Button
           className="w-32 relative rounded-lg p-2 bg-slate-700 text-base text-white ml-auto"
           onClick={handleCreatePost}
+          disabled={isUploading === 'pending'}
         >
-          {isUploading ? 'Posting' : 'Post'}
+          {isUploading === 'pending' ? 'Posting' : 'Post'}
         </Button>
       </div>
     </>

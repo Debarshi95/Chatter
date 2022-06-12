@@ -20,7 +20,7 @@ const PostBoxFooter = ({ post, onUpdate, deleteOption, onDelete }) => {
 
   const user = useSelector(selectAuthUser);
 
-  const handleOnButtonClick = (path = 'likes', type = 'UPDATE') => {
+  const handlePostUpdate = (path = 'likes', type = 'UPDATE') => {
     dispatch(
       updatePost({
         type,
@@ -46,7 +46,7 @@ const PostBoxFooter = ({ post, onUpdate, deleteOption, onDelete }) => {
             className="relative tooltip text-inherit flex items-center mr-4 font-thin"
             onClick={() => {
               const type = postClicked ? 'DELETE' : 'UPDATE';
-              handleOnButtonClick(item.name, type);
+              handlePostUpdate(item.name, type);
             }}
             role="button"
             aria-hidden

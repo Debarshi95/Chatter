@@ -1,11 +1,10 @@
 import { cloneElement, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FiMoreVertical } from 'react-icons/fi';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { BiTrendingUp } from 'react-icons/bi';
 import { signout } from 'store/reducers/slices';
-import { selectAuthUser } from 'store/selectors';
 import { Avatar, Select } from 'components';
 
 const navbarSelectItems = [
@@ -32,10 +31,9 @@ const navbarLinks = [
   },
 ];
 
-const Navbar = () => {
+const Navbar = ({ user }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector(selectAuthUser);
 
   const navigate = useNavigate();
 

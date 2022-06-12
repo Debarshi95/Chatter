@@ -2,16 +2,15 @@ import sanitizeHtml from 'sanitize-html';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { selectAuthUser, selectCommentState } from 'store/selectors';
+import { selectCommentState } from 'store/selectors';
 import { Loader, PostBox, Text } from 'components';
 import { createComment, getPostById, getPostComments } from 'store/reducers/slices';
 import useDocumentTitle from 'hooks/useDocumentTitle';
+import { withProtectedRoute } from 'hoc';
 
-const Comment = () => {
+const Comment = ({ user: authUser }) => {
   const dispatch = useDispatch();
   const { postId = '' } = useParams();
-
-  const authUser = useSelector(selectAuthUser);
   const { comments, post, loading } = useSelector(selectCommentState);
 
   useDocumentTitle('Comment | Chatter');
@@ -92,4 +91,4 @@ const Comment = () => {
   );
 };
 
-export default Comment;
+export default withProtectedRoute(Comment);
