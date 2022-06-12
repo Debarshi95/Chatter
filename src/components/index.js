@@ -14,3 +14,4 @@ export { default as Select } from './Select/Select';
 export { default as Wrapper } from './Wrapper/Wrapper';
 export { default as SideDrawer } from './SideDrawer/SideDrawer';
 export { default as SuggestionSidebar } from './SuggestionSidebar/SuggestionSidebar';
+export { default as ProgressBar } from './ProgressBar/ProgressBar';

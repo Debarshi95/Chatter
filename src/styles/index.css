@@ -56,6 +56,25 @@ body {
     content: attr(data-tooltip);
     @apply tooltip-base;
   }
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(5, 114, 206);
+    animation: indeterminateAnimation 1s infinite linear;
+    transform-origin: 0;
+  }
+
+  @keyframes indeterminateAnimation {
+    0% {
+      transform: translateX(0) scaleX(0);
+    }
+    40% {
+      transform: translateX(0) scaleX(0.4);
+    }
+    100% {
+      transform: translateX(60%) scaleX(0.4);
+    }
+  }
 }
 
 select {
