@@ -2,7 +2,7 @@ export { selectAuthUser, selectAuthState } from './authSelector';
 export { selectPosts, selectPostById, selectPostState } from './postSelector';
 export {
   selectUsers,
-  selectSearchData,
+  selectSearchState,
   selectUserById,
   selectTrendingPosts,
 } from './searchSelector';
