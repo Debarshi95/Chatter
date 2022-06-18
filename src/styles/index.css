@@ -49,6 +49,7 @@ body {
   .min-h-20 {
     min-height: 20rem;
   }
+
   .tooltip-base {
     @apply absolute bg-stone-700 text-white rounded py-[6px] px-[10px] bottom-[-32px] left-[50%] translate-x-[-50%] z-[1] text-center w-full min-w-max text-xs transition-all tracking-wide;
   }

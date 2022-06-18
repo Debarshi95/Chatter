@@ -36,21 +36,19 @@ export const getAuthUserData = createAsyncThunk(
 );
 
 export const signup = createAsyncThunk('auth/signup', async (inputData, { rejectWithValue }) => {
-  try {
-    const { email, password, username } = inputData;
-    const resData = await checkUserNameTaken(username);
+  const { email, password, username } = inputData;
 
-    if (resData?.docs?.length) {
-      throw new Error('Username already taken!!');
-    }
+  const resData = await checkUserNameTaken(username);
 
-    const res = await userSignup({ email, password });
-    if (res?.user) {
-      await createUser({ username, email, uid: res.user.uid });
-    }
-  } catch (error) {
-    rejectWithValue({ message: error?.message, code: error?.code });
+  if (resData?.docs?.length) {
+    return rejectWithValue({ message: 'Username already taken!!' });
   }
+
+  const res = await userSignup({ email, password });
+  if (res?.user) {
+    await createUser({ username, email, uid: res.user.uid });
+  }
+  return res;
 });
 
 export const updateAuthUserData = createAsyncThunk(
@@ -107,11 +105,14 @@ const authSlice = createSlice({
       if (state.loading === 'idle') {
         state.loading = 'pending';
       }
+      state.error = '';
     },
     [signup.rejected]: (state, action) => {
+      const { error } = action;
       state.user = null;
       state.loading = 'idle';
-      state.error = action.payload;
+      const message = error?.message || 'Oops! Some error occurred!!';
+      state.error = message;
     },
     [getAuthUserData.pending]: (state, action) => {
       if (state.loading === 'idle' || !state.currentRequestId) {
