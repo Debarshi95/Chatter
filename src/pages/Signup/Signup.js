@@ -52,7 +52,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full translate-y-10 md:h-fit bg-slate-700 border-stone-600 border-1 max-w-md mx-auto p-4 rounded-md">
+    <div className="w-full min-h-screen md:translate-y-10 md:h-fit bg-slate-700 border-stone-600 border-1 max-w-md mx-auto p-4 rounded-md">
       <Formik
         initialValues={{
           username: '',
