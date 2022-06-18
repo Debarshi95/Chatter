@@ -23,10 +23,10 @@ const Profile = ({ user: authUser }) => {
   useDocumentTitle(`Profile | ${user?.username}`);
 
   useEffect(() => {
-    if (state?.id) {
+    if (user?.id !== state?.id) {
       dispatch(getProfileData(state.id));
     }
-  }, [dispatch, state.id]);
+  }, [dispatch, user?.id, state.id]);
 
   const handleFollowClick = () => {
     const userId = user.id;

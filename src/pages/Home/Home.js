@@ -12,16 +12,17 @@ const Home = ({ user: authUser }) => {
   const postRef = useRef();
   const dispatch = useDispatch();
 
-  const { posts = [], isUploading } = useSelector(selectPostState);
+  const { posts = [], isUploading, loading } = useSelector(selectPostState);
 
   const { postFeed, isLoading } = useLazyLoad(posts, postRef);
 
   useDocumentTitle('Feed | Chatter');
 
   useEffect(() => {
-    if (authUser?.uid) {
+    if (authUser?.uid && loading !== 'pending') {
       dispatch(getAllPosts({ userId: authUser.uid, following: authUser.following?.slice(0, 8) }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser.uid, dispatch, authUser.following]);
 
   const dispatchCreatePost = async (data) => {

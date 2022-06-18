@@ -1,14 +1,13 @@
 import { Form, Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthErrorCodes } from 'firebase/auth';
-import { withAuthRoute } from 'hoc';
-
+import { AuthErrorCodes } from 'Firebase';
+import { authErrorMessage } from 'constants/authMessage';
 import { Button, Text, Input } from 'components';
 import { validateRegister } from 'utils/formValidations';
-import { authErrorMessage } from 'constants/authMessage';
 import { signup } from 'store/reducers/slices';
 import { selectAuthState } from 'store/selectors';
+import { withAuthRoute } from 'hoc';
 import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Signup = () => {
@@ -21,6 +20,7 @@ const Signup = () => {
 
   const handleSubmit = async (values, { resetForm, setFieldError }) => {
     const { password, confirmPassword } = values;
+
     let message;
 
     if (password !== confirmPassword) {
@@ -52,7 +52,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full h-screen md:h-fit bg-slate-700 border-stone-600 border-1 max-w-md mx-auto md:translate-y-14 p-4 rounded-md">
+    <div className="w-full translate-y-10 md:h-fit bg-slate-700 border-stone-600 border-1 max-w-md mx-auto p-4 rounded-md">
       <Formik
         initialValues={{
           username: '',
@@ -65,27 +65,24 @@ const Signup = () => {
       >
         {({ handleSubmit: handleFormikSubmit, isSubmitting, values, errors, isValid }) => {
           const isLoading = isSubmitting || loading === 'pending';
+          const authError = errors?.message;
           return (
             <>
               <Text
                 variant="h5"
-                className="text-2xl text-center translate-y-10 md:translate-y-3 text-blue-500 font-bold mt-4 mb-6"
+                className="text-2xl text-center  text-blue-500 font-bold mt-4 mb-8 md:mb-6"
               >
                 Signup to get started
               </Text>
-              {errors?.message && (
+              {authError && (
                 <Text
                   variant="p"
-                  className="text-red-500 bg-red-400 bg-opacity-30 translate-y-10 md:translate-y-2 p-2 mb-4 rounded-md text-center"
+                  className="bg-red-600 text-white p-2 mb-8 md:mb-4 rounded-md text-center"
                 >
-                  {errors.message || 'Oops! Some error occurred'}
+                  {authError || 'Oops! Some error occurred'}
                 </Text>
               )}
-              <Form
-                autoComplete="off"
-                onSubmit={handleFormikSubmit}
-                className="translate-y-4 md:translate-y-0"
-              >
+              <Form autoComplete="off" onSubmit={handleFormikSubmit}>
                 <Input
                   name="username"
                   hasLabel

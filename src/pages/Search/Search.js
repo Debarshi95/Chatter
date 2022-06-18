@@ -9,17 +9,17 @@ import useDocumentTitle from 'hooks/useDocumentTitle';
 
 const Search = ({ user: authUser }) => {
   const dispatch = useDispatch();
-  const { users = [] } = useSelector(selectSearchState);
+  const { users = [], loading } = useSelector(selectSearchState);
 
   const searchUsers = users.filter((user) => user.id !== authUser.id);
 
   useDocumentTitle('Search | Chatter');
 
   useEffect(() => {
-    if (!users.length) {
+    if (!users.length && loading !== 'pending') {
       dispatch(getAllUsers());
     }
-  }, [dispatch, users.length]);
+  }, [dispatch, loading, users.length]);
 
   const handleOnFollowClick = (userId, isFollowingUser) => {
     let type = 'UPDATE';
