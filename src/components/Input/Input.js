@@ -16,7 +16,7 @@ const Input = ({ hasLabel, className, label, ...props }) => {
         {...props}
       />
       {meta.touched && meta.error ? (
-        <div className="text-red-600 text-sm font-semibold">{meta.error}</div>
+        <div className="text-red-600 mb-2 text-sm font-semibold">{meta.error}</div>
       ) : null}
     </>
   );

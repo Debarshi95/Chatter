@@ -19,13 +19,12 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchUser = () => {
-      return onAuthStateChanged(auth, (user) => {
+    const fetchUser = () =>
+      onAuthStateChanged(auth, (user) => {
         if (user) {
           dispatch(getAuthUserData(user));
         }
       });
-    };
 
     const unsub = fetchUser();
 

@@ -20,7 +20,7 @@ const Signin = () => {
 
   useDocumentTitle('Search | Chatter');
 
-  const { loading = false } = useSelector(selectAuthState);
+  const { loading } = useSelector(selectAuthState);
 
   const handleSubmit = async (values, { resetForm }) => {
     let message;
@@ -69,7 +69,7 @@ const Signin = () => {
           touched,
           setValues,
         }) => {
-          const isLoading = isSubmitting || loading;
+          const isLoading = isSubmitting || loading === 'pending';
           return (
             <>
               <Text
@@ -81,7 +81,7 @@ const Signin = () => {
               {errors?.message && (
                 <Text
                   variant="p"
-                  className="text-red-500 bg-red-400 bg-opacity-30 translate-y-20 md:translate-y-6 p-2 mb-4 rounded-md text-center"
+                  className="bg-red-600 text-white translate-y-20 md:translate-y-6 p-2 mb-4 rounded-md text-center"
                 >
                   {errors.message || 'Oops! Some error occurred'}
                 </Text>

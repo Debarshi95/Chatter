@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getDownloadURL } from 'Firebase';
 import {
   signup as userSignup,
   checkUserNameTaken,
@@ -8,10 +7,7 @@ import {
   signout as userSignout,
   getDocById,
   updateUserProfile,
-  uploadAvatar,
-  updateUserInfo as updateProfileInfo,
 } from 'services/firebaseApi';
-import { getProfileData } from './profileSlice';
 
 export const signin = createAsyncThunk('auth/signin', async (inputData, { rejectWithValue }) => {
   try {
@@ -24,64 +20,36 @@ export const signin = createAsyncThunk('auth/signin', async (inputData, { reject
 
 export const getAuthUserData = createAsyncThunk(
   'auth/getAuthUserData',
-  async (user, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await getDocById(user.uid, 'users');
-      if (res?.id) {
-        const authUser = { id: res.id, ...user, ...res.data() };
-        localStorage.setItem('token', user.accessToken);
-        // eslint-disable-next-line no-use-before-define
-        dispatch(setUser(authUser));
-      }
-    } catch (error) {
-      rejectWithValue({ message: error?.message });
+  async (user, { getState, requestId }) => {
+    const { loading, currentRequestId } = getState().auth;
+    if (loading !== 'pending' || currentRequestId !== requestId) {
+      return null;
     }
-  }
-);
-
-export const signup = createAsyncThunk('auth/signup', async (inputData, { rejectWithValue }) => {
-  try {
-    const { email, password, username } = inputData;
-    const resData = await checkUserNameTaken(username);
-
-    if (resData?.docs?.length) {
-      throw new Error('Username already taken!!');
-    }
-
-    const res = await userSignup({ email, password });
-    if (res?.user) {
-      await createUser({ username, email, uid: res.user.uid });
-    }
-  } catch (error) {
-    rejectWithValue({ message: error?.message, code: error?.code });
-  }
-});
-
-export const updateAuthUserProfile = createAsyncThunk(
-  'profile/updateAuthUserProfile',
-  async (userData, { rejectWithValue, dispatch }) => {
-    const { avatar, username, bio, userId, fullname = '' } = userData;
-
-    try {
-      let url;
-      if (typeof avatar === 'object') {
-        const res = await uploadAvatar(avatar);
-        if (res.ref.name) {
-          url = await getDownloadURL(res.ref);
-          await updateProfileInfo({ userId, username, bio, fullname, avatar: url || '' });
-        }
-      } else {
-        url = avatar;
-        await updateProfileInfo({ userId, username, bio, avatar, fullname });
-      }
-      dispatch(getProfileData(userId));
-      return { ...userData, avatar: url };
-    } catch (error) {
-      rejectWithValue(error);
+    const res = await getDocById(user.uid, 'users');
+    if (res?.id) {
+      const authUser = { id: res.id, ...user, ...res.data() };
+      localStorage.setItem('token', user.accessToken);
+      return authUser;
     }
     return null;
   }
 );
+
+export const signup = createAsyncThunk('auth/signup', async (inputData, { rejectWithValue }) => {
+  const { email, password, username } = inputData;
+
+  const resData = await checkUserNameTaken(username);
+
+  if (resData?.docs?.length) {
+    return rejectWithValue({ message: 'Username already taken!!' });
+  }
+
+  const res = await userSignup({ email, password });
+  if (res?.user) {
+    await createUser({ username, email, uid: res.user.uid });
+  }
+  return res;
+});
 
 export const updateAuthUserData = createAsyncThunk(
   'auth/updateAuthUserData',
@@ -108,7 +76,8 @@ export const signout = createAsyncThunk('auth/signout', async (_, { dispatch }) 
 
 const initialState = {
   user: null,
-  loading: false,
+  loading: 'idle',
+  currentRequestId: undefined,
   error: '',
 };
 
@@ -118,33 +87,52 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload;
-      state.loading = false;
+      state.loading = 'idle';
     },
   },
   extraReducers: {
     [signin.pending]: (state) => {
-      state.loading = true;
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+      }
     },
     [signin.rejected]: (state, action) => {
       state.user = null;
-      state.loading = false;
+      state.loading = 'idle';
       state.error = action.payload;
     },
     [signup.pending]: (state) => {
-      state.loading = true;
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+      }
+      state.error = '';
     },
     [signup.rejected]: (state, action) => {
+      const { error } = action;
       state.user = null;
-      state.loading = false;
-      state.error = action.payload;
+      state.loading = 'idle';
+      const message = error?.message || 'Oops! Some error occurred!!';
+      state.error = message;
     },
-    [getAuthUserData.pending]: (state) => {
-      state.loading = true;
+    [getAuthUserData.pending]: (state, action) => {
+      if (state.loading === 'idle' || !state.currentRequestId) {
+        state.loading = 'pending';
+        state.currentRequestId = action.meta.requestId;
+      }
+    },
+    [getAuthUserData.fulfilled]: (state, action) => {
+      const { requestId } = action.meta;
+      if (state.loading === 'pending' && state.currentRequestId === requestId) {
+        state.loading = 'idle';
+        state.user = action.payload;
+        state.currentRequestId = undefined;
+      }
     },
     [getAuthUserData.rejected]: (state, action) => {
       state.user = null;
-      state.loading = false;
+      state.loading = 'idle';
       state.error = action.payload;
+      state.currentRequestId = undefined;
     },
     [updateAuthUserData.fulfilled]: (state, action) => {
       const { type, userId } = action.payload;
@@ -157,17 +145,13 @@ const authSlice = createSlice({
       state.error = '';
     },
     [updateAuthUserData.rejected]: (state, action) => {
-      state.user = null;
-      state.loading = false;
-      state.error = action.payload;
-    },
-    [updateAuthUserProfile.pending]: (state) => {
-      state.loading = true;
-    },
-    [updateAuthUserProfile.fulfilled]: (state, action) => {
-      const { payload } = action;
-      const { user } = state;
-      state.user = { ...user, ...payload };
+      const {
+        payload,
+        meta: { requestId },
+      } = action;
+      if (state.loading === 'pending' && state.currentRequestId === requestId) {
+        state.error = payload;
+      }
     },
   },
 });

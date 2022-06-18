@@ -1,53 +1,70 @@
+import sanitizeHtml from 'sanitize-html';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useLazyLoad from 'hooks/useLazyLoad';
-import { CardHeader, Loader, PostBox, Text } from 'components';
+import { Loader, PostBox, ProgressBar, Text } from 'components';
 import { withProtectedRoute } from 'hoc';
-import { selectPosts, selectAuthUser } from 'store/selectors';
+import { selectPostState } from 'store/selectors';
 import { createPost, getAllPosts } from 'store/reducers/slices';
 import useDocumentTitle from 'hooks/useDocumentTitle';
+import useLazyLoad from 'hooks/useLazyLoad';
 
-const Home = () => {
+const Home = ({ user: authUser }) => {
   const postRef = useRef();
   const dispatch = useDispatch();
-  const posts = useSelector(selectPosts);
-  const authUser = useSelector(selectAuthUser);
+
+  const { posts = [], isUploading, loading } = useSelector(selectPostState);
 
   const { postFeed, isLoading } = useLazyLoad(posts, postRef);
 
   useDocumentTitle('Feed | Chatter');
 
   useEffect(() => {
-    if (authUser?.uid) {
-      dispatch(getAllPosts({ userId: authUser.uid, following: authUser.following }));
+    if (authUser?.uid && loading !== 'pending') {
+      dispatch(getAllPosts({ userId: authUser.uid, following: authUser.following?.slice(0, 8) }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser.uid, dispatch, authUser.following]);
 
-  const handleCreatePost = async (data) => {
+  const dispatchCreatePost = async (data) => {
     dispatch(createPost({ ...data, user: authUser }));
   };
 
   return (
     <div className="p-2 flex-1">
-      <PostBox
-        contentEditable
-        user={authUser}
-        onCreatePost={handleCreatePost}
-        showPostIcons={false}
-        headerComponent={
-          <CardHeader
-            avatarClassName="w-16 h-16"
-            avatar={authUser?.avatar}
-            userId={authUser?.id}
-            username={authUser?.username}
-            fullname={authUser?.fullname}
-          />
-        }
-      />
+      <PostBox>
+        <PostBox.Header
+          avatarClassName="w-16 h-16"
+          avatar={authUser?.avatar}
+          userId={authUser?.id}
+          username={authUser?.username}
+          fullname={authUser?.fullname}
+        />
+        <PostBox.Editable
+          onCreate={dispatchCreatePost}
+          type="CREATE"
+          placeholder="Write something interesting..."
+        />
+      </PostBox>
+      {isUploading === 'pending' && <ProgressBar />}
       <section>
         {postFeed?.map((post) => (
           <div key={post.id} ref={postRef}>
-            <PostBox ref={postRef} key={post.id} post={post} />
+            <PostBox key={post.id} post={post}>
+              <PostBox.Header
+                avatarClassName="w-16 h-16"
+                avatar={post.user?.avatar}
+                userId={post.user?.id}
+                username={post?.user?.username || post?.user?.fullname}
+              />
+              <PostBox.Content>
+                <div
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(post?.content) }}
+                  className="bg-transparent my-4 text-base outline-none w-full h-full text-slate-300"
+                />
+                {post?.image && <img alt="" src={post.image} />}
+              </PostBox.Content>
+              <PostBox.Footer post={post} />
+            </PostBox>
           </div>
         ))}
         <div>

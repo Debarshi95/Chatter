@@ -10,11 +10,11 @@ import 'styles/index.css';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <Provider store={store}>
+    <Provider store={store}>
+      <ErrorBoundary>
         <App />
-      </Provider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </Provider>
   </React.StrictMode>
 );
 

@@ -4,18 +4,17 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 const suggestionBarLink = ['/', '/search', '/trending'];
 
-const Wrapper = () => {
+const Wrapper = (props) => {
   const { pathname } = useLocation();
   const showSuggestionBar = suggestionBarLink.includes(pathname);
 
   return (
     <main>
-      <Navbar />
-
+      <Navbar {...props} />
       <div className="flex w-full md:max-w-85 mx-auto">
         <SideDrawer />
         <Outlet />
-        {showSuggestionBar && <SuggestionSidebar />}
+        {showSuggestionBar && <SuggestionSidebar {...props} />}
       </div>
     </main>
   );

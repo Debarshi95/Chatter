@@ -12,26 +12,27 @@ import {
 
 export const getAllPosts = createAsyncThunk(
   'post/getAllPosts',
-  async (userData, { rejectWithValue }) => {
+  async (userData, { getState, requestId }) => {
     const { userId, following } = userData;
-    try {
-      const res = await getPosts(userId, following);
-      if (res?.docs) {
-        const posts = await Promise.all(
-          res.docs.map(async (doc) => {
-            const post = { id: doc.id, ...doc.data() };
-            const user = await getDocById(post.userId, 'users');
-            post.user = { id: user.id, ...user.data() };
-            return post;
-          })
-        );
 
-        return posts;
-      }
+    const { loading, currentRequestId } = getState().posts;
+    if (loading !== 'pending' || currentRequestId !== requestId) {
       return null;
-    } catch (error) {
-      return rejectWithValue(error);
     }
+
+    const res = await getPosts(userId, following);
+    if (res?.docs) {
+      const posts = await Promise.all(
+        res.docs.map(async (doc) => {
+          const post = { id: doc.id, ...doc.data() };
+          const user = await getDocById(post.userId, 'users');
+          post.user = { id: user.id, ...user.data() };
+          return post;
+        })
+      );
+      return posts;
+    }
+    return null;
   }
 );
 
@@ -94,32 +95,43 @@ export const updatePost = createAsyncThunk(
 
 const initialState = {
   posts: [],
-  loading: false,
+  loading: 'idle',
   error: '',
-  isUploading: false,
+  isUploading: 'idle',
+  currentRequestId: undefined,
 };
 const postSlice = createSlice({
   name: 'post',
   initialState,
   extraReducers: {
-    [createPost.pending]: (state) => {
-      state.loading = true;
-      state.isUploading = true;
-      state.error = '';
+    [createPost.pending]: (state, action) => {
+      if (state.isUploading === 'idle' || !state.currentRequestId) {
+        state.isUploading = 'pending';
+        state.currentRequestId = action.meta.requestId;
+        state.error = '';
+      }
     },
-    [createPost.fulfilled]: (state) => {
-      state.loading = false;
-      state.isUploading = false;
-      state.error = '';
+    [createPost.fulfilled]: (state, action) => {
+      const { requestId } = action.meta;
+      if (state.isUploading === 'pending' && state.currentRequestId === requestId) {
+        state.isUploading = 'idle';
+        state.currentRequestId = undefined;
+      }
     },
     [createPost.rejected]: (state, action) => {
-      state.loading = false;
-      state.isUploading = false;
-      state.error = action.payload?.message;
+      const { requestId } = action.meta;
+      if (state.isUploading === 'pending' && state.currentRequestId === requestId) {
+        state.isUploading = 'idle';
+        state.error = action.payload;
+        state.currentRequestId = undefined;
+      }
     },
-    [updatePost.pending]: (state) => {
-      state.loading = true;
-      state.error = '';
+    [updatePost.pending]: (state, action) => {
+      if (state.loading === 'idle' && !state.currentRequestId) {
+        state.loading = 'pending';
+        state.currentRequestId = action.meta.requestId;
+        state.error = '';
+      }
     },
     [updatePost.fulfilled]: (state, action) => {
       const { postId, path, userId, type } = action.payload;
@@ -132,27 +144,39 @@ const postSlice = createSlice({
       }
 
       state.error = '';
-      state.loading = false;
+      state.loading = 'idle';
     },
     [updatePost.rejected]: (state, action) => {
-      state.loading = false;
+      state.loading = 'idle';
       state.error = action.payload?.message;
     },
-    [getAllPosts.pending]: (state) => {
-      state.loading = true;
-      state.error = '';
+    [getAllPosts.pending]: (state, action) => {
+      if (state.loading === 'idle' || !state.currentRequestId) {
+        state.loading = 'pending';
+        state.currentRequestId = action.meta.requestId;
+        state.error = '';
+      }
     },
     [getAllPosts.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.posts = [...action.payload];
-      state.error = '';
+      const { requestId } = action.meta;
+      if (state.loading === 'pending' && state.currentRequestId === requestId) {
+        state.loading = 'idle';
+        state.isUploading = 'idle';
+        state.posts = action.payload;
+        state.currentRequestId = undefined;
+      }
     },
     [getAllPosts.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload?.message;
+      const { requestId } = action.meta;
+      if (state.loading === 'pending' && state.currentRequestId === requestId) {
+        state.loading = 'idle';
+        state.isUploading = 'idle';
+        state.error = action.payload;
+        state.currentRequestId = undefined;
+      }
     },
     [deletePost.rejected]: (state, action) => {
-      state.loading = false;
+      state.loading = 'idle';
       state.error = action.payload?.message;
     },
   },

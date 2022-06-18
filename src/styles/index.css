@@ -49,12 +49,32 @@ body {
   .min-h-20 {
     min-height: 20rem;
   }
+
   .tooltip-base {
     @apply absolute bg-stone-700 text-white rounded py-[6px] px-[10px] bottom-[-32px] left-[50%] translate-x-[-50%] z-[1] text-center w-full min-w-max text-xs transition-all tracking-wide;
   }
   .tooltip[data-tooltip]:hover::after {
     content: attr(data-tooltip);
     @apply tooltip-base;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(5, 114, 206);
+    animation: indeterminateAnimation 1s infinite linear;
+    transform-origin: 0;
+  }
+
+  @keyframes indeterminateAnimation {
+    0% {
+      transform: translateX(0) scaleX(0);
+    }
+    40% {
+      transform: translateX(0) scaleX(0.4);
+    }
+    100% {
+      transform: translateX(60%) scaleX(0.4);
+    }
   }
 }
 

@@ -5,7 +5,6 @@ import {
   createComment as createPostComment,
   getAllComments,
   uploadCommentImage,
-  getPostUser,
 } from 'services/firebaseApi';
 
 export const getPostComments = createAsyncThunk(
@@ -57,16 +56,16 @@ export const createComment = createAsyncThunk(
 );
 
 export const getPostById = createAsyncThunk(
-  'comment/getPostById',
+  'comments/getPostById',
   async (postId, { rejectWithValue }) => {
     try {
       const res = await getDocById(postId, 'posts');
 
       if (res?.id) {
         const post = { id: res.id, ...res.data() };
-        const postUser = await getPostUser(post.userId);
-        if (postUser?.docs?.length) {
-          post.user = { id: postUser.docs[0].id, ...postUser.docs[0].data() };
+        const postUser = await getDocById(post.userId, 'users');
+        if (postUser?.id) {
+          post.user = { id: postUser.id, ...postUser.data() };
         }
         return post;
       }

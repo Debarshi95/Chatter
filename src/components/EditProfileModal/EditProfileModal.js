@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { Avatar, Button, Text } from 'components';
 import { useDispatch } from 'react-redux';
-import { updateAuthUserProfile, setProfileState } from 'store/reducers/slices';
+import { updateProfile } from 'store/reducers/slices';
 import { validImageTypes } from 'constants/fileTypes';
 
 ReactModal.setAppElement('#root');
@@ -44,8 +44,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
 
   const handleUpdateProfile = async () => {
     if (userDetails.fullname === '' || userDetails.bio === '') return;
-    dispatch(updateAuthUserProfile({ ...userDetails, userId: user.id }));
-    dispatch(setProfileState(true));
+    dispatch(updateProfile({ ...userDetails, userId: user.id }));
     onClose(false);
   };
   return (

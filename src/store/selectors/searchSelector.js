@@ -1,12 +1,12 @@
-const selectSearchData = (state) => state.search;
+const selectSearchState = (state) => state.search;
 
 const selectUsers = (authUserId) => (state) => {
-  const { users } = selectSearchData(state);
+  const { users } = selectSearchState(state);
   return users.filter((user) => user.id !== authUserId);
 };
 
 const selectUserById = (id) => (state) => {
-  const searchData = selectSearchData(state);
+  const searchData = selectSearchState(state);
   return searchData.users.find((user) => user.id === id);
 };
 
@@ -20,4 +20,4 @@ const selectTrendingPosts =
     }
     return state.search.posts;
   };
-export { selectUsers, selectUserById, selectSearchData, selectTrendingPosts };
+export { selectUsers, selectUserById, selectSearchState, selectTrendingPosts };
